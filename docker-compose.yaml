@@ -1,0 +1,14 @@
+
+version: '2.1'
+services:
+    time_management_postgres:
+        image: postgres:9.6
+        ports:
+          - 5433:5432
+        environment:
+            POSTGRES_DB: fleet_watch
+            POSTGRES_USER: fleet_watch
+            POSTGRES_PASSWORD: knlzlEI90kMc
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data/pgdata
