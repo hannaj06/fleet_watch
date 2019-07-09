@@ -1,7 +1,7 @@
 
 version: '2.1'
 services:
-    time_management_postgres:
+    fleet_watch_db:
         image: postgres:9.6
         ports:
           - 5433:5432
