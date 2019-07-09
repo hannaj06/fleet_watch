@@ -11,11 +11,9 @@ drop_tables = [
 'DROP TABLE IF EXISTS member_tests CASCADE',
 'DROP TABLE IF EXISTS captains_test CASCADE',
 'DROP TABLE IF EXISTS members CASCADE',
-
 ]
 
 db.transaction(drop_tables, pprint=True)
-
 
 create_tables = [
 '''
@@ -33,7 +31,6 @@ rig varchar(10) primary key
 );
 ''',
 
-
 '''
 CREATE TABLE boats(
 boat_id serial primary key,
@@ -41,7 +38,6 @@ boat_name varchar(100) not null unique,
 manufacturer_id int references boat_manufacturer(manufacturer_id),
 rig varchar(10) references rigging(rig) not null,
 max_weight_kg smallint,
-min_weight_kg smallint,
 checked_out timestamp
 );
 ''',
@@ -70,7 +66,6 @@ meters decimal
 );
 ''',
 
-
 '''
 CREATE TABLE captains_test(
 test_id serial primary key,
@@ -86,9 +81,107 @@ CREATE TABLE member_tests(
 member_id int references members(member_id),
 test_id int references captains_test(test_id)
 );
-
 '''
 ]
 
 
 db.transaction(create_tables, pprint=True)
+
+rig_sql = [
+'''
+INSERT INTO rigging(rig) VALUES ('1x')
+''',
+
+'''
+INSERT INTO rigging(rig) VALUES ('2x/2-')
+''',
+
+'''
+INSERT INTO rigging(rig) VALUES ('4x/4-')
+''',
+
+'''
+INSERT INTO rigging(rig) VALUES ('4+')
+''',
+
+'''
+INSERT INTO rigging(rig) VALUES ('8+')
+''']
+
+db.transaction(rig_sql, pprint=True)
+
+boat_make = [
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Flippi');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Resolute');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Mass Aero');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Peinert');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Still Water');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Hudson');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Fluid Design');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Empacher');
+''',
+
+'''
+INSERT INTO boat_manufacturer(manufacturer_name) VALUES ('Vespoli');
+'''
+]
+
+db.transaction(boat_make, pprint=True)
+
+boats = [
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Caro', 2, '8+', 92)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Igor', 2, '4+', 90)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Nik', 2, '4+', 80)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Rosette', 1, '2x/2-', 75)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Peters', 2, '2x/2-', 80)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Sarah White', 2, '1x', 75)
+'''
+]
+
+db.transaction(boats, pprint=True)
+
+print(db.get_df_from_query('select * from boats', pprint=True))
