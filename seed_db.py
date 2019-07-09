@@ -39,6 +39,7 @@ boat_name varchar(100) not null unique,
 manufacturer_id int references boat_manufacturer(manufacturer_id),
 rig varchar(10) references rigging(rig) not null,
 max_weight_kg smallint,
+serial_num varchar(100),
 checked_out timestamp
 );
 ''',
@@ -46,7 +47,8 @@ checked_out timestamp
 '''
 CREATE TABLE members(
 member_id serial primary key,
-name varchar(100) not null,
+first_name varchar(100) not null,
+last_name varchar(100) not null,
 email varchar(100) not null,
 password char(32) not null,
 private_single boolean not null,
@@ -238,7 +240,22 @@ db.transaction(boats, pprint=True)
 cert_level = [
 '''
 INSERT INTO certification_level(level, description)
-VALUES ('Level 1', '100 miles completed in gig/peinerts')
+VALUES ('Level 1 sculling', 'Permitted to bow club doubles and singles without a coach present.')
+''',
+
+'''
+INSERT INTO certification_level(level, description)
+VALUES ('Level 2 sculling', 'Permitted to bow club quads without a coach present.')
+''',
+
+'''
+INSERT INTO certification_level(level, description)
+VALUES ('Level 1 sweep', 'Permitted to bow club pairs without a coach present.')
+''',
+
+'''
+INSERT INTO certification_level(level, description)
+VALUES ('Level 2 sweep', 'Permitted to bow club straight fours without a coach present.')
 '''
 ]
 
@@ -248,4 +265,33 @@ print(db.get_df_from_query('''
     SELECT *
     FROM boats
       JOIN boat_manufacturer USING (manufacturer_id)
+    ''', pprint=True))
+
+print(db.get_df_from_query('''
+    SELECT *
+    FROM certification_level
+    ''', pprint=True))
+
+
+members_data = [
+'''
+INSERT INTO members(first_name, last_name, email, password, private_single, status, active)
+VALUES('Andy', 'McLaughlin', 'andy@gmail.com', md5('place_holder'), false, '{"admin": true, "captain": true}', true)
+''',
+
+'''
+INSERT INTO members(first_name, last_name, email, password, private_single, status, active)
+VALUES('Alex', 'Brown', 'alex@gmail.com', md5('place_holder'), false, '{"admin": true}', true)
+''',
+
+'''
+INSERT INTO members(first_name, last_name, email, password, private_single, active)
+VALUES('Mike', 'Battaglia', 'mike@gmail.com', md5('place_holder'), false, true)
+'''
+]
+
+db.transaction(members_data, pprint=True)
+
+print(db.get_df_from_query('''
+SELECT * FROM members
     ''', pprint=True))
