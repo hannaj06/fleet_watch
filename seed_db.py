@@ -8,6 +8,7 @@ drop_tables = [
 'DROP TABLE IF EXISTS rigging CASCADE',
 'DROP TABLE IF EXISTS boats CASCADE',
 'DROP TABLE IF EXISTS trips CASCADE',
+'DROP TABLE IF EXISTS certification_level CASCADE',
 'DROP TABLE IF EXISTS member_tests CASCADE',
 'DROP TABLE IF EXISTS captains_test CASCADE',
 'DROP TABLE IF EXISTS members CASCADE',
@@ -67,9 +68,17 @@ meters decimal
 ''',
 
 '''
+CREATE TABLE certification_level(
+cert_id serial primary key,
+level varchar(20) not null,
+description text
+)
+''',
+
+'''
 CREATE TABLE captains_test(
 test_id serial primary key,
-level varchar(20) not null,
+cert_id smallint references certification_level(cert_id) not null,
 captain int references members(member_id),
 test_date date not null,
 description text
@@ -214,9 +223,29 @@ VALUES ('Morelli', 1, '4x/4-', 80)
 '''
 INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
 VALUES ('Cook', 1, '4x/4-', 80)
+''',
+
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('1869', 4, '1x', 80)
 '''
 ]
 
 db.transaction(boats, pprint=True)
 
-print(db.get_df_from_query('select * from boats', pprint=True))
+
+cert_level = [
+'''
+INSERT INTO certification_level(level, description)
+VALUES ('Level 1', '100 miles completed in gig/peinerts')
+'''
+]
+
+db.transaction(cert_level, pprint=True)
+
+print(db.get_df_from_query('''
+    SELECT *
+    FROM boats
+      JOIN boat_manufacturer USING (manufacturer_id)
+    ''', pprint=True))
