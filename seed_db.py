@@ -173,12 +173,47 @@ VALUES ('Rosette', 1, '2x/2-', 75)
 
 '''
 INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
-VALUES ('Peters', 2, '2x/2-', 80)
+VALUES ('Peters', 1, '2x/2-', 80)
 ''',
 
 '''
 INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
-VALUES ('Sarah White', 2, '1x', 75)
+VALUES ('Sarah White', 1, '1x', 75)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Smirnoff', 1, '1x', 75)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Balo', 1, '1x', 80)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('1936', 1, '4x/4-', 75)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Osborn', 1, '4x/4-', 70)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Akamai', 1, '4x/4-', 80)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Morelli', 1, '4x/4-', 80)
+''',
+
+'''
+INSERT INTO boats(boat_name, manufacturer_id, rig, max_weight_kg)
+VALUES ('Cook', 1, '4x/4-', 80)
 '''
 ]
 
