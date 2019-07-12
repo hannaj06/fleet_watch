@@ -12,3 +12,17 @@ services:
             PGDATA: /var/lib/postgresql/data/pgdata
         volumes:
             - ./pgdata:/var/lib/postgresql/data/pgdata
+
+    fleet_watch_app:
+        image: fleet_watch
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: 'no'
+        depends_on:
+            - fleet_watch_db
+        environment:
+            - DB_CONN_STR=postgresql+psycopg2:://fleet_watch:knlzlEI90kMc@fleet_watch_db:5433/fleet_watch
+        ports:
+            - "8080:80"
+            - "443:443"
