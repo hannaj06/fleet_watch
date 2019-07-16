@@ -1,19 +1,13 @@
-from lib.authentication import check_auth, authenticate
-from blueprints.crm import blueprint as crm_blueprint
-from blueprints.time_tracker import blueprint as time_tracker_blueprint
 from flask import Flask, request
+
 
 app = Flask(__name__)
 
 
-@app.before_request
-def check_auth_request():
-    auth = request.authorization
-    if not auth:
-        return authenticate()
-    if not check_auth(auth.username, auth.password):
-        return authenticate()
+@app.route('/')
+def hello_world():
+	return 'Hello world'
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='127.0.0.1', debug=True, port=5000)

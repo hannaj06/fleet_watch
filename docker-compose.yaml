@@ -23,6 +23,8 @@ services:
             - fleet_watch_db
         environment:
             - DB_CONN_STR=postgresql+psycopg2:://fleet_watch:knlzlEI90kMc@fleet_watch_db:5433/fleet_watch
+            - FLASK_ENV=development
+            - FLASK_APP=fleet_watch_app.py
         ports:
-            - "8080:80"
+            - "5000:5000"
             - "443:443"

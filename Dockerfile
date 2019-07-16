@@ -4,7 +4,8 @@ COPY . /app
 
 WORKDIR /app
 
-ENV CRM_DB_CONN_STR=''
-ENV TT_DB_CONN_STR=''
-
 RUN pip install -r requirements.txt
+
+ENV LISTEN_PORT 5000
+
+EXPOSE 5000
