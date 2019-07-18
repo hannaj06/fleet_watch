@@ -1,0 +1,58 @@
+label {
+  display: block;
+  width: 5rem;
+  margin-right: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+input {
+  display: inline-block;
+  padding: 0.5rem;
+}
+
+form {
+  width: 25rem;
+}
+
+form .login button {
+  width: 57%;
+  text-align: center;
+  border-radius: 0.25rem;
+}
+
+form .group {
+  padding: 0.5rem;
+}
+
+form .forgot {
+  font-size: 12px;
+}
+
+form .buttons a {
+  margin-right: 1rem;
+}
+
+.buttons button {
+  margin-right: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  outline: none;
+  border: 1px solid #0e52a2;
+  background-color: #0e52a2;
+  font-weight: bold;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1d72d3;
+}
+
+.login {
+  margin: auto;
+  width: 50%;
+  margin-top: 15%;
+}

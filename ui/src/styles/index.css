@@ -1,0 +1,11 @@
+/* Included React normalize */
+@import-normalize;
+
+/* Theme colors and variables */
+/* @import 'colors.css'; */
+
+/* Styles */
+@import 'layout.css';
+@import 'main.css';
+@import 'tables.css';
+@import 'forms.css';
