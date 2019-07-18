@@ -13,8 +13,10 @@ Access the service at http://localhost:5000/
 
 ### Install docker (ubuntu)
 
+```bash
 $ curl -fsSL https://get.docker.com -o get-docker.sh
 $ sudo sh get-docker.sh
 $ sudo usermod -aG docker your-user
+```
 
 ### Install docker-compose (ubuntu)
