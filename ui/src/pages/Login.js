@@ -17,6 +17,7 @@ function Login() {
       const auth = await api.login(email.value, password.value);
       dispatch({ type: 'LOGIN', auth });
     } catch (error) {
+      console.log(error);
       alert('Invalid');
     }
     setAuthAttempted(false);
