@@ -49,6 +49,11 @@ def get_me():
 
     return jsonify(logged_in_as=current_user), 200
 
+@app.route('/api/members')
+def members():
+    current_user = get_jwt_identity()
+
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', debug=True, port=5000)
