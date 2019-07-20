@@ -17,7 +17,7 @@ jwt = JWTManager(app)
 @app.route('/')
 def hello_world():
     var = {"api_version": "1", "key": "pair"}
-    return 'Hello Sarah! how are you?'
+    return json.dumps(var)
 
 
 @app.route('/api/auth/login', methods=['POST'])
