@@ -1,9 +1,6 @@
 import auth from './auth';
 
 async function login(email, password) {
-  if (email === 'invalid') {
-    return await auth.authenticate(false);
-  }
   return await auth.authenticate();
 }
 
