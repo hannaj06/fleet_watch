@@ -17,7 +17,7 @@ jwt = JWTManager(app)
 @app.route('/')
 def hello_world():
     var = {"api_version": "1", "key": "pair"}
-    return 'Hello world'
+    return 'Hello Sarah! how are you?'
 
 
 @app.route('/api/auth/login', methods=['POST'])
@@ -56,4 +56,4 @@ def members():
     return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5000)

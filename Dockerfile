@@ -9,7 +9,7 @@ RUN pip install -r requirements.txt\
 	&& apt-get install vim -y
 
 ENV LISTEN_PORT 5000
-
+ENV FLASK_ENV=development
 EXPOSE 5000
 
-COPY . /app
+#COPY . /app

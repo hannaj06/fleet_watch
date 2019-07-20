@@ -1,30 +1,35 @@
-
-version: '2.1'
+version: "2.1"
 services:
-    fleet_watch_db:
-        image: postgres:9.6
-        ports:
-          - 5433:5432
-        environment:
-            POSTGRES_DB: fleet_watch
-            POSTGRES_USER: fleet_watch
-            POSTGRES_PASSWORD: knlzlEI90kMc
-            PGDATA: /var/lib/postgresql/data/pgdata
-        volumes:
-            - ./pgdata:/var/lib/postgresql/data/pgdata
+  fleet_watch_db:
+    image: postgres:9.6
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: fleet_watch
+      POSTGRES_USER: fleet_watch
+      POSTGRES_PASSWORD: knlzlEI90kMc
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
 
-    fleet_watch_app:
-        image: fleet_watch
-        build:
-            context: .
-            dockerfile: Dockerfile
-        restart: 'no'
-        depends_on:
-            - fleet_watch_db
-        environment:
-            - DB_CONN_STR=postgresql+psycopg2:://fleet_watch:knlzlEI90kMc@fleet_watch_db:5433/fleet_watch
-            - FLASK_ENV=development
-            - FLASK_APP=fleet_watch_app.py
-        ports:
-            - "5000:5000"
-            - "443:443"
+  fleet_watch_app:
+    image: fleet_watch
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: "no"
+    depends_on:
+      - fleet_watch_db
+    environment:
+      - DB_CONN_STR=postgresql+psycopg2:://fleet_watch:knlzlEI90kMc@fleet_watch_db:5433/fleet_watch
+      - FLASK_ENV=development
+      - FLASK_APP=fleet_watch_app.py
+    volumes:
+      - .:/app
+    stdin_open: true
+    tty: true
+    ports:
+      - "5000:5000"
+      - "443:443"
+    command:
+      - "bash"
