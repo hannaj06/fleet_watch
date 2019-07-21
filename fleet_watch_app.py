@@ -16,6 +16,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
+app.config['JSONIFY_MIMETYPE'] = 'application/vnd.api+json'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://fleet_watch:knlzlEI90kMc@fleet_watch_db:5432/fleet_watch'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
@@ -81,14 +82,14 @@ class TripSchema(Schema):
                        self_view='trip_member',
                        self_view_kwargs={'id': '<trip_id>'},
                        related_view='member_detail',
-                       related_view_kwargs={'id': '<member_id>'},
+                       related_view_kwargs={'trip_id': '<trip_id>'},
                        schema='MemberSchema',
                        type_='member')
   boat = Relationship(attribute='boat',
                        self_view='trip_boat',
                        self_view_kwargs={'id': '<trip_id>'},
                        related_view='boat_detail',
-                       related_view_kwargs={'id': '<boat_id>'},
+                       related_view_kwargs={'trip_id': '<trip_id>'},
                        schema='BoatSchema',
                        type_='boat')
 
@@ -115,8 +116,21 @@ class MemberList(ResourceList):
   data_layer = {'session': db.session, 'model': Member}
 
 class MemberDetail(ResourceDetail):
+  def before_get_object(self, view_kwargs):
+    if view_kwargs.get('trip_id') is not None:
+        try:
+            trip = self.session.query(Trip).filter_by(trip_id=view_kwargs['trip_id']).one()
+        except NoResultFound:
+            raise ObjectNotFound({'parameter': 'trip_id'},
+                                  "Trip: {} not found".format(view_kwargs['trip_id']))
+        else:
+            if trip.member_id is not None:
+                view_kwargs['id'] = trip.member_id
+            else:
+                view_kwargs['id'] = None
+
   schema = MemberSchema
-  data_layer = {'session': db.session, 'model': Member}
+  data_layer = {'session': db.session, 'model': Member, 'methods': {'before_get_object': before_get_object}}
 
 class MemberRelationship(ResourceRelationship):
   schema = MemberSchema
@@ -157,8 +171,21 @@ class BoatList(ResourceList):
   data_layer = {'session': db.session, 'model': Boat}
 
 class BoatDetail(ResourceDetail):
+  def before_get_object(self, view_kwargs):
+    if view_kwargs.get('trip_id') is not None:
+        try:
+            trip = self.session.query(Trip).filter_by(trip_id=view_kwargs['trip_id']).one()
+        except NoResultFound:
+            raise ObjectNotFound({'parameter': 'trip_id'},
+                                  "Trip: {} not found".format(view_kwargs['trip_id']))
+        else:
+            if trip.boat_id is not None:
+                view_kwargs['id'] = trip.boat_id
+            else:
+                view_kwargs['id'] = None
+
   schema = BoatSchema
-  data_layer = {'session': db.session, 'model': Boat}
+  data_layer = {'session': db.session, 'model': Boat, 'methods': {'before_get_object': before_get_object}}
 
 class BoatRelationship(ResourceRelationship):
   schema = BoatSchema
@@ -199,7 +226,7 @@ def login():
 
 api = Api(app)
 api.route(MemberList, 'member_list', '/api/members')
-api.route(MemberDetail, 'member_detail', '/api/members/<int:id>')
+api.route(MemberDetail, 'member_detail', '/api/members/<int:id>', '/api/trips/<int:trip_id>/member')
 api.route(MemberRelationship, 'member_trips', '/api/members/<int:id>/relationships/trips')
 
 api.route(TripList, 'trip_list', '/api/trips', '/api/members/<int:member_id>/trips', '/api/boats/<int:boat_id>/trips')
@@ -208,7 +235,7 @@ api.route(TripRelationship, 'trip_boat', '/api/trips/<int:id>/relationships/boat
 api.route(TripRelationship, 'trip_member', '/api/trips/<int:id>/relationships/member')
 
 api.route(BoatList, 'boat_list', '/api/boats')
-api.route(BoatDetail, 'boat_detail', '/api/boats/<int:id>')
+api.route(BoatDetail, 'boat_detail', '/api/boats/<int:id>', '/api/trips/<int:trip_id>/boat')
 api.route(BoatRelationship, 'boat_trips', '/api/boats/<int:id>/relationships/trips')
 
 if __name__ == '__main__':
