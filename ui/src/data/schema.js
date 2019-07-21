@@ -3,9 +3,6 @@ import { Schema } from '@orbit/data';
 const schemaDefinition = {
   models: {
     member: {
-      keys: {
-        remoteId: {},
-      },
       attributes: {
         firstName: { type: 'string' },
         lastName: { type: 'string' },
@@ -17,9 +14,6 @@ const schemaDefinition = {
       },
     },
     boat: {
-      keys: {
-        remoteId: {},
-      },
       attributes: {
         boatName: { type: 'string' },
       },
@@ -28,9 +22,6 @@ const schemaDefinition = {
       },
     },
     trip: {
-      keys: {
-        remoteId: {},
-      },
       attributes: {
         launch: { type: 'string' },
         land: { type: 'string' },

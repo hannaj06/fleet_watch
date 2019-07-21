@@ -32,6 +32,7 @@ const useAuth = () => {
       configureOrbit(token);
       const fetchUser = async () => {
         try {
+          console.log('Fetching current member');
           const member = await api.getMember();
           dispatch({ type: 'LOAD_MEMBER', member });
         } catch {
