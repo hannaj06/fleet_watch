@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY requirements.txt requirements.txt
 
-RUN pip install -r requirements.txt\
-	&& apt-get update -y\
-	&& apt-get install vim -y
+RUN apt-get update -y\
+  && apt-get install unixodbc unixodbc-dev vim -y\
+  && pip install -r requirements.txt
 
 ENV LISTEN_PORT 5000
 ENV FLASK_ENV=development
