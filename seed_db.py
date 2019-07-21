@@ -181,21 +181,46 @@ print(db.get_df_from_query('''
 members_data = [
 '''
 INSERT INTO members(first_name, last_name, email, password, private_single, status, active)
-VALUES('Andy', 'McLaughlin', 'andy@gmail.com', md5('place_holder'), false, '{"admin": true, "captain": true}', true)
+VALUES('Andy', 'McLaughlin', 'andy@example.com', md5('place_holder'), false, '{"admin": true, "captain": true}', true)
 ''',
 
 '''
 INSERT INTO members(first_name, last_name, email, password, private_single, status, active)
-VALUES('Alex', 'Brown', 'alex@gmail.com', md5('place_holder'), false, '{"admin": true}', true)
+VALUES('Alex', 'Brown', 'alex@example.com', md5('place_holder'), false, '{"admin": true}', true)
 ''',
 
 '''
 INSERT INTO members(first_name, last_name, email, password, private_single, active)
-VALUES('Mike', 'Battaglia', 'mike@gmail.com', md5('place_holder'), false, true)
+VALUES('Mike', 'Battaglia', 'mike@example.com', md5('place_holder'), false, true)
 '''
 ]
 
 db.transaction(members_data, pprint=True)
+
+trips_data = [
+'''
+INSERT INTO trips(launch, land, meters, member_id, boat_id)
+VALUES('2019-07-01 04:30:00', '2019-07-01 06:00:00', 2000, 1, 1)
+''',
+
+'''
+INSERT INTO trips(launch, land, meters, member_id, boat_id)
+VALUES('2019-07-01 04:30:00', '2019-07-01 06:00:00', 2000, 1, 2)
+''',
+
+'''
+INSERT INTO trips(launch, land, meters, member_id, boat_id)
+VALUES('2019-07-01 04:30:00', '2019-07-01 06:00:00', 2000, 2, 1)
+''',
+
+'''
+INSERT INTO trips(launch, land, meters, member_id, boat_id)
+VALUES('2019-07-01 04:30:00', '2019-07-01 06:00:00', 2000, 2, 3)
+'''
+
+]
+
+db.transaction(trips_data, pprint=True)
 
 print(db.get_df_from_query('''
 SELECT * FROM members
