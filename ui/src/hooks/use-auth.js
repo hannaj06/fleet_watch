@@ -33,8 +33,8 @@ const useAuth = () => {
       const fetchUser = async () => {
         try {
           console.info('Fetching current member');
-          const member = await api.getMember();
-          dispatch({ type: 'LOAD_MEMBER', member });
+          const { data } = await api.getMember();
+          dispatch({ type: 'LOAD_MEMBER', data });
         } catch {
           dispatch({ type: 'LOGOUT' });
         }

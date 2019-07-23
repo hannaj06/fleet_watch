@@ -60,7 +60,10 @@ let api = {
   },
 
   getMember() {
-    return this.findRecord('member', 'me');
+    return store.query((q) => q.findRecord({ type: 'member', id: 'me' }),
+      label: 'Find current user',
+      sources: { remote: { include: ['trips'] } },
+    );
   },
 
   getMemberForTrip(trip) {
@@ -80,9 +83,14 @@ let api = {
       q.findRelatedRecords({ type: 'member', id: member.id }, 'trips')
     );
   },
+
   getAllTrips() {
-    return this.findRecords('trip');
+    return store.query((q) => q.findRecords('trip'), {
+      label: 'Find all boats',
+      sources: { remote: { include: ['boat', 'member'] } },
+    });
   },
+
   getAllBoats() {
     return this.findRecords('boat');
   },

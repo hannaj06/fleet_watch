@@ -16,8 +16,8 @@ function Login() {
     try {
       const { data: auth } = await api.login(email.value, password.value);
       dispatch({ type: 'LOGIN', auth });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.error(e);
       alert('Invalid');
     }
   };
