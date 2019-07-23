@@ -11,12 +11,17 @@ import { coordinator } from './api/client';
 import useAuth from './hooks/use-auth';
 import { Current, Login, Logout, MyTrips, Profile, Row } from './pages/pages';
 import { Header, PrivateRoute } from './components/components';
+import { LogLevel } from '@orbit/coordinator';
 
 function App() {
   useEffect(() => {
     console.info('Activating Coordinator');
     const activate = async () => {
-      return await coordinator.activate();
+      try {
+        await coordinator.activate({ logLevel: LogLevel.Info });
+      } catch (e) {
+        console.error(e);
+      }
     };
     activate();
   }, []);

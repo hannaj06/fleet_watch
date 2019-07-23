@@ -8,7 +8,7 @@ function Current() {
   useEffect(() => {
     const fetchData = async () => {
       console.info('Fetching current trips');
-      const trips = await api.getAllTrips();
+      let trips = await api.getAllTrips();
       const members = await Promise.all(
         trips.map(async (trip) => {
           return await api.getMemberForTrip(trip);
