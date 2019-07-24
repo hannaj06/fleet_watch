@@ -10,9 +10,12 @@ from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelati
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow_jsonapi.flask import Schema, Relationship
 from marshmallow_jsonapi import fields
+from sqlalchemy import and_
 
 from flask_rest_jsonapi.exceptions import ObjectNotFound
 from sqlalchemy.orm.exc import NoResultFound
+import hashlib
+
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
@@ -30,6 +33,7 @@ class Member(db.Model):
   first_name = db.Column(db.String)
   last_name = db.Column(db.String)
   email = db.Column(db.String)
+  password = db.Column(db.String)
   trips = db.relationship('Trip', backref='member')
 
 class Trip(db.Model):
@@ -212,6 +216,10 @@ def login():
 
     email = request.json.get('email', None)
     password = request.json.get('password', None)
+    md = hashlib.md5()
+    md.update(password.encode('utf-8'))
+    password_hash = md.hexdigest()
+    print(password_hash)
     if not email:
         return jsonify({"msg": "Missing email parameter"}), 400
     if not password:
@@ -220,6 +228,12 @@ def login():
     if email == 'invalid' or password == 'invalid':
         return jsonify({"msg": "Bad email or password"}), 401
 
+    q = db.session.query(
+        Member.email, 
+        Member.password).filter(
+                Member.email==email, Member.password==password_hash)
+
+    print(q.one_or_none())
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=email)
     return jsonify(token=access_token), 200
