@@ -1,37 +1,47 @@
-import React from 'react';
-import { useInputValue, useCheckboxValue } from '../hooks/use-input-value';
+import React, { useState } from 'react';
+import { useInputValue } from '../hooks/use-input-value';
+import { Redirect } from 'react-router-dom';
+import { useAuthState } from '../contexts/states/auth-state';
 
 function Profile() {
-  const firstName = useInputValue('');
-  const lastName = useInputValue('');
-  const autoLaunch = useCheckboxValue(false);
-  const autoLogOut = useCheckboxValue(false);
+  const [{ member }] = useAuthState();
+  const firstName = useInputValue(member.attributes.firstName);
+  const lastName = useInputValue(member.attributes.lastName);
+  const [shouldCancel, setShouldCancel] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const cancel = (e) => {
+    e.preventDefault();
+    setShouldCancel(true);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
   };
 
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div className="group">
-          <label htmlFor="firstName">First Name</label>
-          <input name="firstName" {...firstName}></input>
+  return shouldCancel ? (
+    <Redirect to="/my-trips" />
+  ) : (
+    <div className="m-auto max-w-md">
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="form-label" htmlFor="firstName">
+            First Name
+          </label>
+          <input className="form-input" name="firstName" {...firstName}></input>
         </div>
-        <div className="group">
-          <label htmlFor="lastName">Last Name</label>
-          <input name="lastName" {...lastName}></input>
+        <div className="mb-6">
+          <label className="form-label" htmlFor="lastName">
+            Last Name
+          </label>
+          <input className="form-input" name="lastName" {...lastName}></input>
         </div>
-        <div className="group">
-          <label htmlFor="autoLaunch">Auto Launch my single?</label>
-          <input type="checkbox" name="autoLaunch" {...autoLaunch}></input>
-        </div>
-        <div className="group">
-          <label htmlFor="autoLogOut">Log out after launch?</label>
-          <input type="checkbox" name="autoLogOut" {...autoLogOut}></input>
-        </div>
-        <div className="group">
-          <button type="submit">Save</button>
+        <div className="flex items-center justify-between">
+          <button className="btn" onClick={cancel}>
+            Cancel
+          </button>
+          <button className="btn confirm" type="submit">
+            Save
+          </button>
         </div>
       </form>
     </div>

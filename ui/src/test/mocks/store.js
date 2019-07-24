@@ -44,23 +44,23 @@ mockStore.update((t) => boats.map((boat) => t.addRecord(boat)));
 mockStore.update((t) => trips.map((trip) => t.addRecord(trip)));
 mockStore.update((t) => myTrips.map((trip) => t.addRecord(trip)));
 
-mockStore.on('transform', (transform) => {
-  console.debug(transform);
-});
+// mockStore.on('transform', (transform) => {
+//   console.debug(transform);
+// });
 
-mockStore
-  .query((q) => q.findRecords('trip'), {
-    label: 'Find all trips',
-    sources: {
-      default: {
-        include: ['boat'],
-      },
-    },
-  })
-  .then((a) => {
-    mockStore
-      .query((q) => q.findRelatedRecord({ type: 'trip', id: a[0].id }, 'boat'))
-      .then((b) => {});
-  });
+// mockStore
+//   .query((q) => q.findRecords('trip'), {
+//     label: 'Find all trips',
+//     sources: {
+//       default: {
+//         include: ['boat'],
+//       },
+//     },
+//   })
+//   .then((a) => {
+//     mockStore
+//       .query((q) => q.findRelatedRecord({ type: 'trip', id: a[0].id }, 'boat'))
+//       .then((b) => {});
+//   });
 
 export { mockCoordinator, mockStore };

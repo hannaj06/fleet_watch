@@ -15,33 +15,35 @@ function configureOrbit(token) {
 const useAuth = () => {
   const [state, dispatch] = useAuthState();
   const { auth = {} } = state;
-  const { token } = auth;
+  const { token, member } = auth;
 
   useEffect(() => {
-    console.info('Restoring token from local storage');
     let existingToken = localStorage.fleetwatchtoken;
-    dispatch({
-      type: 'SET_TOKEN',
-      auth: { token: existingToken },
-    });
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (token) {
-      console.info('Attempting Login');
-      configureOrbit(token);
+    if (existingToken) {
+      console.info('Restoring token from local storage');
+      dispatch({
+        type: 'SET_TOKEN',
+        auth: { token: existingToken },
+      });
+      dispatch({
+        type: 'AUTH',
+        isLoading: true,
+      });
+      configureOrbit(existingToken);
       const fetchUser = async () => {
         try {
-          console.log('Fetching current member');
+          console.info('Fetching current member');
           const member = await api.getMember();
           dispatch({ type: 'LOAD_MEMBER', member });
         } catch {
           dispatch({ type: 'LOG_OUT' });
         }
       };
-      fetchUser();
+      if (!member) fetchUser();
+    } else {
+      dispatch({ type: 'AUTH', isLoading: false });
     }
-  }, [token, dispatch]);
+  }, [token, member, dispatch]);
 
   return state;
 };

@@ -3,7 +3,7 @@ const fakeAuth = {
     return new Promise((resolve, reject) => {
       return setTimeout(() => {
         if (valid) {
-          return resolve({ token: 'abc-123' });
+          return resolve({ data: { token: 'abc-123' } });
         } else {
           return reject({});
         }
