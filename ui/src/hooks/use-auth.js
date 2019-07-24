@@ -36,7 +36,7 @@ const useAuth = () => {
           const member = await api.getMember();
           dispatch({ type: 'LOAD_MEMBER', member });
         } catch {
-          dispatch({ type: 'LOG_OUT' });
+          dispatch({ type: 'LOGOUT' });
         }
       };
       if (!member) fetchUser();
