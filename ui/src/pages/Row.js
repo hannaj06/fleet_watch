@@ -1,123 +1,92 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import MyTrips from '../components/MyTrips';
+import React, { useState } from 'react';
 import api from '../api/client';
-import { zip, get } from '../utils';
 import { useInputValue, useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
-
-function TripForm(props) {
-  const { boats, cancel, member } = props;
-  const boat = useInputValue(get(boats[0], 'attributes.boatName'));
-  const launch = useInputValue('');
-  const land = useInputValue('');
-  const meters = useNumberValue(0);
-
-  const handleSubmit = () => {
-    props.handleSubmit(
-      {
-        boat: boat.value,
-        launch: launch.value,
-        land: land.value,
-        meters: meters.value,
-      },
-      boat.value,
-      member.id
-    );
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="group">
-        <label htmlFor="boat">Boat</label>
-        <select name="boat" {...boat}>
-          {boats.map((option) => (
-            <option key={option.id} value={option.attributes.boatName}>
-              {option.attributes.boatName}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="group">
-        <label htmlFor="launch">Launch</label>
-        <input name="launch" {...launch}></input>
-      </div>
-      <div className="group">
-        <label htmlFor="land">Land</label>
-        <input name="land" {...land}></input>
-      </div>
-      <div className="group">
-        <label htmlFor="meters">Meters</label>
-        <input name="meters" {...meters}></input>
-      </div>
-      <div className="buttons">
-        <button onClick={cancel}>Cancel</button>
-        <button type="submit">Save</button>
-      </div>
-    </form>
-  );
-}
+import AsyncSelect from 'react-select/async';
+import { Redirect } from 'react-router-dom';
 
 function Row() {
   const [{ member }] = useAuthState();
-  const [boats, setBoats] = useState([]);
-  const [trips, setTrips] = useState([]);
+  const launch = useInputValue('');
+  const land = useInputValue('');
+  const meters = useNumberValue(0);
+  const [boat, setBoat] = useState();
+  const [shouldCancel, setShouldCancel] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.info('Fetching boat options');
-      const boats = await api.getAllBoats();
-      setBoats(boats);
-    };
-    fetchData();
-  }, [member]);
-
-  const fetchData = async () => {
-    console.info('Fetching my trips');
-    const trips = await api.getTrips(member);
-    const tripBoats = await Promise.all(
-      trips.map(async (trip) => {
-        return await api.getBoatForTrip(trip);
-      })
-    );
-    setTrips(zip(trips, tripBoats));
+  const cancel = (e) => {
+    e.preventDefault();
+    setShouldCancel(true);
   };
 
-  const dataCallback = useCallback(fetchData, [member]);
+  const boatPromise = async () => {
+    const boats = await api.getAllBoats();
+    return boats.map((option) => {
+      const value = option.attributes.boatName;
+      const label = option.attributes.boatName;
+      return { value, label };
+    });
+  };
 
-  useEffect(() => {
-    dataCallback();
-  }, [dataCallback]);
-
-  const handleSubmit = async (attributes, boatId, memberId) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const attributes = {
+      launch: launch.value,
+      land: land.value,
+      meters: meters.value,
+    };
     try {
       const trip = await api.createRecord('trip', attributes);
-      await api.updateRelationship(trip.id, 'trip', boatId, 'boat');
-      await api.updateRelationship(trip.id, 'trip', memberId, 'member');
-      fetchData();
-      setRow(false);
-    } catch {}
+      await api.updateRelationship(trip.id, 'trip', boat, 'boat');
+      await api.updateRelationship(trip.id, 'trip', member.id, 'member');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const cancel = () => {
-    setRow(false);
-  };
-
-  const [row, setRow] = useState(false);
-
-  return (
-    <div>
-      {row ? (
-        <TripForm
-          member={member}
-          boats={boats}
-          cancel={cancel}
-          handleSubmit={handleSubmit}
-        />
-      ) : (
-        <button onClick={() => setRow(true)}>Row</button>
-      )}
-      <h3>My Trips</h3>
-      <MyTrips fetchData={fetchData} trips={trips} boats={boats} />
+  return shouldCancel ? (
+    <Redirect to="/my-trips" />
+  ) : (
+    <div className="m-auto max-w-sm">
+      <form className="form" onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="form-label" htmlFor="boat">
+            Boat
+          </label>
+          <div className="inline-block relative w-64">
+            <AsyncSelect
+              defaultOptions
+              loadOptions={boatPromise}
+              onChange={({ value }) => setBoat(value)}
+            />
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="form-label" htmlFor="launch">
+            Launch
+          </label>
+          <input className="form-input" name="launch" {...launch}></input>
+        </div>
+        <div className="mb-4">
+          <label className="form-label" htmlFor="land">
+            Land
+          </label>
+          <input className="form-input" name="land" {...land}></input>
+        </div>
+        <div className="mb-6">
+          <label className="form-label" htmlFor="meters">
+            Meters
+          </label>
+          <input className="form-input" name="meters" {...meters}></input>
+        </div>
+        <div className="flex items-center justify-between">
+          <button className="btn cancel" onClick={cancel}>
+            Cancel
+          </button>
+          <button className="btn confirm" type="submit">
+            Save
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

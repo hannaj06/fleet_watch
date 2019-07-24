@@ -26,21 +26,30 @@ function Current() {
 
   return trips ? (
     <table className="table">
-      <thead>
+      <thead className="thead">
         <tr>
-          <th>Name</th>
-          <th>Boat</th>
-          <th className="right">Launch Time</th>
+          <th className="table-header">Name</th>
+          <th className="table-header">Boat</th>
+          <th className="table-header text-right">Launch</th>
         </tr>
       </thead>
       <tbody>
         {trips.map(([trip, member, boat]) => (
           <tr key={trip.id}>
-            <td>
-              {member.attributes.firstName} {member.attributes.lastName}
+            <td className="table-td">
+              <span className="responsive-cell-label">Name</span>
+              <span className="cell-text">
+                {member.attributes.firstName} {member.attributes.lastName}
+              </span>
             </td>
-            <td>{boat.attributes.boatName}</td>
-            <td className="right">{trip.attributes.launch}</td>
+            <td className="table-td">
+              <span className="responsive-cell-label">Boat</span>
+              <span className="cell-text">{boat.attributes.boatName}</span>
+            </td>
+            <td className="table-td text-right">
+              <span className="responsive-cell-label">Launch</span>
+              <span className="cell-text">{trip.attributes.launch}</span>
+            </td>
           </tr>
         ))}
       </tbody>

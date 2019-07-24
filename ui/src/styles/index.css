@@ -1,11 +1,126 @@
-/* Included React normalize */
-@import-normalize;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Theme colors and variables */
-/* @import 'colors.css'; */
+body {
+  @apply bg-gray-300;
+}
 
-/* Styles */
-@import 'layout.css';
-@import 'main.css';
-@import 'tables.css';
-@import 'forms.css';
+.table {
+  @apply bg-white text-left w-full border-collapse text-sm rounded-sm;
+  tr:nth-child(even) {
+    @apply bg-gray-100;
+  }
+}
+
+.table-header {
+  @apply px-4 py-2 bg-gray-200 rounded-sm font-bold uppercase text-sm text-gray-800 border-b border-gray-200;
+}
+
+.table-td {
+  @apply px-4 py-2 border-b border-gray-200;
+}
+
+.table-header,
+.table-td {
+  @apply flex justify-between w-full;
+  @screen sm {
+    @apply table-cell w-40;
+  }
+}
+
+.responsive-cell-label {
+  @apply w-1/4 font-bold uppercase text-gray-800 text-left pr-4;
+  @screen sm {
+    @apply hidden;
+  }
+}
+
+.thead {
+  @apply hidden;
+  @screen sm {
+    display: table-header-group;
+  }
+}
+
+.cell-text {
+  @apply text-right;
+}
+
+.form {
+  @apply bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4;
+}
+
+.form-label {
+  @apply block text-gray-700 text-sm font-bold mb-2;
+}
+
+.form-input {
+  @apply shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight;
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+}
+
+.btn {
+  @apply bg-white text-gray-800 border-gray-500 font-bold rounded border-b-2 shadow-md py-2 px-6 inline-flex items-center justify-center;
+  &.small {
+    @apply mx-1 py-1 px-3 rounded text-xs bg-gray-200;
+  }
+  &:hover {
+    @apply border-gray-600 bg-gray-100;
+  }
+  &:active {
+    @apply bg-gray-400;
+  }
+  &.confirm {
+    @apply border-green-500 bg-green-200;
+    &:hover {
+      @apply border-green-600 bg-green-100;
+    }
+    &:active {
+      @apply bg-green-400;
+    }
+  }
+  &.action {
+    @apply border-blue-500 bg-blue-200;
+    &:hover {
+      @apply border-blue-600 bg-blue-100;
+    }
+    &:active {
+      @apply bg-blue-400;
+    }
+  }
+  &.delete {
+    @apply border-red-500 bg-red-200;
+    &:hover {
+      @apply border-red-600 bg-red-100;
+    }
+    &:active {
+      @apply bg-red-400;
+    }
+  }
+}
+
+.table-buttons {
+  @apply flex-row-reverse;
+  @screen sm {
+    @apply flex-row;
+  }
+  .btn {
+    @apply w-1/3;
+    @screen sm {
+      @apply w-auto;
+    }
+  }
+}
+
+.select {
+  @apply block appearance-none w-full bg-white border border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight;
+  &:focus {
+    @apply outline-none shadow-outline;
+  }
+  &:hover {
+    @apply border-gray-500;
+  }
+}
