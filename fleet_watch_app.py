@@ -24,8 +24,8 @@ def hello_world():
 @jwt_required
 def get_me():
   current_user = get_jwt_identity()
-  member = db.session.query(Member).filter_by(email=current_user).one()
-  result = MemberSchema().dump(member)
+  member = db.session.query(models.Member).filter_by(email=current_user).one()
+  result = models.MemberSchema().dump(member)
   session = {
     "data": {
       "id": "current",
@@ -60,9 +60,9 @@ def login():
         return jsonify({"msg": "Bad email or password"}), 401
 
     q = db.session.query(
-        Member.email, 
-        Member.password).filter(
-                Member.email==email, Member.password==password_hash)
+        models.Member.email,
+        models.Member.password).filter(
+                models.Member.email==email, models.Member.password==password_hash)
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=email)
