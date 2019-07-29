@@ -26,8 +26,7 @@ def hello_world():
     var = {"api_version": "1", "key": "pair"}
     return json.dumps(var)
 
-<<<<<<< HEAD
-=======
+
 @app.route('/api/sessions/current')
 @jwt_required
 def get_me():
@@ -49,11 +48,6 @@ def get_me():
 
   return jsonify(session), 200
 
-@app.route('/api/auth/login', methods=['POST'])
-def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
->>>>>>> Offline first, fetching session + data
 
 app.register_blueprint(auth)
 app.register_blueprint(home)
