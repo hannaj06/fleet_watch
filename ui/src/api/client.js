@@ -2,31 +2,35 @@ import adapter from './adapter';
 import {
   coordinator as realCoordinator,
   store as realStore,
+  recordIdentityFromKeys,
 } from '../data/store';
-import { mockCoordinator, mockStore } from '../test/mocks/store';
+import {
+  coordinator as mockCoordinator,
+  store as mockStore,
+} from '../test/mocks/store';
 import mockClient from '../test/mocks/server';
 
-let store = realStore;
-let coordinator = realCoordinator;
-
-if (process.env.REACT_APP_MOCK === 'true') {
-  store = mockStore;
-  coordinator = mockCoordinator;
-}
+const isMock = process.env.REACT_APP_MOCK === 'true';
+const store = isMock ? mockStore : realStore;
+const coordinator = isMock ? mockCoordinator : realCoordinator;
 
 let api = {
   login(email, password) {
     return adapter.post('auth/login', { email, password });
   },
+
   logout(token) {
     return adapter.post('auth/logout', { token });
   },
+
   findRecord(type, id) {
     return store.query((q) => q.findRecord({ type, id }));
   },
+
   findRecords(type) {
     return store.query((q) => q.findRecords(type));
   },
+
   createRecord(type, attributes) {
     return store.update((t) =>
       t.addRecord({
@@ -60,9 +64,17 @@ let api = {
   },
 
   getMember() {
-    return store.query((q) => q.findRecord({ type: 'member', id: 'me' }),
-      label: 'Find current user',
-      sources: { remote: { include: ['trips'] } },
+    const { id } = recordIdentityFromKeys({
+      type: 'session',
+      keys: { remoteId: 'current' },
+    });
+    return store.query((q) =>
+      q.findRecord(
+        { type: 'session', id },
+        {
+          sources: { remote: { include: ['member'] } },
+        }
+      )
     );
   },
 
@@ -80,7 +92,9 @@ let api = {
 
   getTrips(member) {
     return store.query((q) =>
-      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips')
+      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips', {
+        sources: { remote: { include: ['boat', 'member'] } },
+      })
     );
   },
 
@@ -96,7 +110,7 @@ let api = {
   },
 };
 
-if (process.env.REACT_APP_MOCK === 'true') {
+if (isMock) {
   api = { ...api, ...mockClient };
 }
 

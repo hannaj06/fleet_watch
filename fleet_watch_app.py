@@ -26,6 +26,34 @@ def hello_world():
     var = {"api_version": "1", "key": "pair"}
     return json.dumps(var)
 
+<<<<<<< HEAD
+=======
+@app.route('/api/sessions/current')
+@jwt_required
+def get_me():
+  current_user = get_jwt_identity()
+  member = db.session.query(Member).filter_by(email=current_user).one()
+  result = MemberSchema().dump(member)
+  session = {
+    "data": {
+      "id": "current",
+      "type": "session",
+      "relationships": {
+        "member": {
+          "data": {"id": member.member_id, "type": "member"}
+        },
+      },
+      "included": [ result.data ]
+    }
+  }
+
+  return jsonify(session), 200
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+>>>>>>> Offline first, fetching session + data
 
 app.register_blueprint(auth)
 app.register_blueprint(home)

@@ -1,6 +1,9 @@
-import { useAuthState } from '../contexts/states/auth-state';
 import { useEffect } from 'react';
+import config from '../config';
+import { useAuthState } from '../contexts/states/auth-state';
 import api, { coordinator } from '../api/client';
+
+const { tokenKey } = config;
 
 function configureOrbit(token) {
   const header = `Bearer ${token}`;
@@ -18,7 +21,7 @@ const useAuth = () => {
   const { token, member } = auth;
 
   useEffect(() => {
-    let existingToken = localStorage.fleetwatchtoken;
+    const existingToken = localStorage[tokenKey];
     if (existingToken) {
       console.info('Restoring token from local storage');
       dispatch({
@@ -33,9 +36,12 @@ const useAuth = () => {
       const fetchUser = async () => {
         try {
           console.info('Fetching current member');
-          const { data } = await api.getMember();
-          dispatch({ type: 'LOAD_MEMBER', data });
-        } catch {
+          const data = await api.getMember();
+          const id = data.relationships.member.data.id;
+          const user = await api.findRecord('member', id);
+          dispatch({ type: 'LOAD_MEMBER', member: user });
+        } catch (e) {
+          console.error(e);
           dispatch({ type: 'LOGOUT' });
         }
       };

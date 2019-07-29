@@ -18,7 +18,7 @@ function Login() {
       dispatch({ type: 'LOGIN', auth });
     } catch (e) {
       console.error(e);
-      alert('Invalid');
+      setAuthAttempted(false);
     }
   };
 
