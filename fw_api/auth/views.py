@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from ..auth import auth
 
 
-@auth.route('/auth/login', methods=['get'])
+@auth.route('/auth/login', methods=['POST'])
 def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
