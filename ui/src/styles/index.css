@@ -58,7 +58,7 @@ body {
 .form-input {
   @apply shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight;
   &:focus {
-    @apply outline-none shadow-outline;
+    @apply outline-none shadow-outline shadow-md;
   }
 }
 

@@ -2,6 +2,14 @@ import { Schema } from '@orbit/data';
 
 const schemaDefinition = {
   models: {
+    session: {
+      keys: {
+        remoteId: {},
+      },
+      relationships: {
+        member: { type: 'hasOne', model: 'member' },
+      },
+    },
     member: {
       keys: {
         remoteId: {},

@@ -1,16 +1,20 @@
+import config from '../../config';
+
+const { tokenKey } = config;
+
 const initialState = { auth: { token: null }, member: null, isLoading: true };
 
 const authStateReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN': {
-      localStorage.setItem('fleetwatchtoken', action.auth.token);
+      localStorage.setItem(tokenKey, action.auth.token);
       return { ...state, auth: action.auth };
     }
     case 'AUTH': {
       return { ...state, isLoading: action.isLoading };
     }
     case 'LOGOUT': {
-      localStorage.removeItem('fleetwatchtoken');
+      localStorage.removeItem(tokenKey);
       return {
         ...state,
         auth: { token: null },

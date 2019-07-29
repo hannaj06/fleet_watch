@@ -3,14 +3,14 @@ import Coordinator from '@orbit/coordinator';
 import schema from '../../data/schema';
 import { getRandom, getAllBoats, generateTrip, generateMember } from './utils';
 
-let mockStore = {};
-let mockCoordinator = {};
+let store = {};
+let coordinator = {};
 
 if (process.env.REACT_APP_MOCK === 'true') {
-  mockStore = new Store({ schema, name: 'default' });
+  store = new Store({ schema, name: 'default' });
 
-  mockCoordinator = new Coordinator({
-    sources: [mockStore],
+  coordinator = new Coordinator({
+    sources: [store],
   });
 
   const member = {
@@ -42,14 +42,15 @@ if (process.env.REACT_APP_MOCK === 'true') {
 
   const boats = getAllBoats();
 
-  mockStore.update((t) => [t.addRecord(member)]);
-  mockStore.update((t) => members.map((member) => t.addRecord(member)));
-  mockStore.update((t) => boats.map((boat) => t.addRecord(boat)));
-  mockStore.update((t) => trips.map((trip) => t.addRecord(trip)));
-  mockStore.update((t) => myTrips.map((trip) => t.addRecord(trip)));
+  store.update((t) => [t.addRecord(member)]);
+  store.update((t) => members.map((member) => t.addRecord(member)));
+  store.update((t) => boats.map((boat) => t.addRecord(boat)));
+  store.update((t) => trips.map((trip) => t.addRecord(trip)));
+  store.update((t) => myTrips.map((trip) => t.addRecord(trip)));
 
-  mockStore.on('transform', (transform) => {
+  store.on('transform', (transform) => {
     console.debug(transform);
   });
+}
 
-export { mockCoordinator, mockStore };
+export { coordinator, store };

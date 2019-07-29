@@ -1,7 +1,7 @@
 import React from 'react';
+import { FaHome, FaSignInAlt, FaListOl, FaTint } from 'react-icons/fa';
 import Link from './Link';
 import { useAuthState } from '../contexts/states/auth-state';
-import { FaHome, FaSignInAlt, FaListOl, FaTint } from 'react-icons/fa';
 
 function NavLink({ to, color, icon, children, onClick }) {
   return (

@@ -1,17 +1,25 @@
 import Store from '@orbit/store';
 import { KeyMap } from '@orbit/data';
 import JSONAPISource, { JSONAPISerializer } from '@orbit/jsonapi';
-import Coordinator, {
-  EventLoggingStrategy,
-  RequestStrategy,
-  SyncStrategy,
-} from '@orbit/coordinator';
+import Coordinator, { RequestStrategy, SyncStrategy } from '@orbit/coordinator';
 import schema from './schema';
-import { API_ROOT } from '../api/adapter';
+import config from '../config';
 
-let keyMap = new KeyMap();
+const { API_ROOT } = config;
+
+const keyMap = new KeyMap();
 
 const store = new Store({ schema, keyMap });
+
+const recordIdentityFromKeys = ({ type, id, keys }) => {
+  const recordIdentity = {
+    type,
+    keys,
+    id: id || keyMap.idFromKeys(type, keys) || schema.generateId(type),
+  };
+  keyMap.pushRecord(recordIdentity);
+  return recordIdentity;
+};
 
 class CustomJSONAPISerializer extends JSONAPISerializer {
   resourceKey(type) {
@@ -31,7 +39,8 @@ const coordinator = new Coordinator({
   sources: [store, remote],
 });
 
-coordinator.addStrategy(new EventLoggingStrategy());
+// Log all the things
+// coordinator.addStrategy(new EventLoggingStrategy());
 
 // Query the remote server whenever the store is queried
 coordinator.addStrategy(
@@ -40,7 +49,16 @@ coordinator.addStrategy(
     on: 'beforeQuery',
     target: 'remote',
     action: 'pull',
-    blocking: false,
+    blocking(query) {
+      if (
+        query.expression.op === 'findRecord' &&
+        (query.expression.record.type === 'session' ||
+          query.expression.record.type === 'member')
+      ) {
+        return true;
+      }
+      return true;
+    },
   })
 );
 
@@ -64,4 +82,4 @@ coordinator.addStrategy(
   })
 );
 
-export { coordinator, store };
+export { coordinator, store, recordIdentityFromKeys };
