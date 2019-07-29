@@ -10,8 +10,8 @@ const METER_THRESHOLD = 10000;
 function TableRow({ trip, tripBoat, boats, fetchData }) {
   const [isEdit, setIsEdit] = useState(false);
   const [boat, setBoat] = useState({
-    value: tripBoat.attributes.boatName,
-    label: tripBoat.attributes.boatName,
+    value: tripBoat ? tripBoat.attributes.boatName : '',
+    label: tripBoat ? tripBoat.attributes.boatName : '',
   });
   const launch = useInputValue(trip.attributes.launch);
   const land = useInputValue(trip.attributes.land);
