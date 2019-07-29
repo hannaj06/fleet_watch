@@ -8,18 +8,19 @@ function Current() {
   useEffect(() => {
     const fetchData = async () => {
       console.info('Fetching current trips');
-      const trips = await api.getAllTrips();
+      const allTrips = await api.getAllTrips();
+
       const members = await Promise.all(
-        trips.map(async (trip) => {
+        allTrips.map(async (trip) => {
           return await api.getMemberForTrip(trip);
         })
       );
       const boats = await Promise.all(
-        trips.map(async (trip) => {
+        allTrips.map(async (trip) => {
           return await api.getBoatForTrip(trip);
         })
       );
-      setTrips(zip(trips, members, boats));
+      setTrips(zip(allTrips, members, boats));
     };
     fetchData();
   }, []);
@@ -44,7 +45,9 @@ function Current() {
             </td>
             <td className="table-td">
               <span className="responsive-cell-label">Boat</span>
-              <span className="cell-text">{boat.attributes.boatName}</span>
+              <span className="cell-text">
+                {boat ? boat.attributes.boatName : ''}
+              </span>
             </td>
             <td className="table-td text-right">
               <span className="responsive-cell-label">Launch</span>
