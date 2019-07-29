@@ -51,7 +51,6 @@ def login():
     md = hashlib.md5()
     md.update(password.encode('utf-8'))
     password_hash = md.hexdigest()
-    print(password_hash)
     if not email:
         return jsonify({"msg": "Missing email parameter"}), 400
     if not password:
@@ -65,7 +64,6 @@ def login():
         Member.password).filter(
                 Member.email==email, Member.password==password_hash)
 
-    print(q.one_or_none())
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=email)
     return jsonify(token=access_token), 200
