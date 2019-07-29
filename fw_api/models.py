@@ -4,7 +4,6 @@ from marshmallow_jsonapi import fields
 from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelationship
 from fw_api import db
 
-
 class Member(db.Model):
     __tablename__ = 'members'
     member_id = db.Column(db.Integer, primary_key=True)
@@ -35,7 +34,7 @@ class MemberSchema(Schema):
         self_view = 'member_detail'
         self_view_kwargs = {'id': '<id>'}
         self_view_many = 'member_list'
-  
+
     id = fields.Integer(as_string=True, dump_only=True, attribute='member_id')
     first_name = fields.Str(required=True)
     last_name = fields.Str(required=True)
@@ -55,7 +54,7 @@ class TripSchema(Schema):
         self_view = 'trip_detail'
         self_view_kwargs = {'id': '<id>'}
         self_view_many = 'trip_list'
-  
+
     id = fields.Integer(as_string=True, dump_only=True, attribute='trip_id')
     launch = fields.Str(required=True)
     land = fields.Str(required=True)

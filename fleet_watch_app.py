@@ -31,8 +31,8 @@ def hello_world():
 @jwt_required
 def get_me():
   current_user = get_jwt_identity()
-  member = db.session.query(Member).filter_by(email=current_user).one()
-  result = MemberSchema().dump(member)
+  member = db.session.query(models.Member).filter_by(email=current_user).one()
+  result = models.MemberSchema().dump(member)
   session = {
     "data": {
       "id": "current",
@@ -52,6 +52,7 @@ def get_me():
 app.register_blueprint(auth)
 app.register_blueprint(home)
 app.register_blueprint(members)
+
 
 
 api = Api(app)
