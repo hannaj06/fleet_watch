@@ -9,7 +9,7 @@ from sqlalchemy import and_
 from flask_rest_jsonapi.exceptions import ObjectNotFound
 from flask_rest_jsonapi import Api
 from sqlalchemy.orm.exc import NoResultFound
-from fw_api import views
+from fw_api import models
 from fw_api import db, jwt, app
 import hashlib
 import json
@@ -59,18 +59,18 @@ def login():
     return jsonify(token=access_token), 200
 
 api = Api(app)
-api.route(views.MemberList, 'member_list', '/api/members')
-api.route(views.MemberDetail, 'member_detail', '/api/members/<int:id>', '/api/trips/<int:trip_id>/member')
-api.route(views.MemberRelationship, 'member_trips', '/api/members/<int:id>/relationships/trips')
+api.route(models.MemberList, 'member_list', '/api/members')
+api.route(models.MemberDetail, 'member_detail', '/api/members/<int:id>', '/api/trips/<int:trip_id>/member')
+api.route(models.MemberRelationship, 'member_trips', '/api/members/<int:id>/relationships/trips')
 
-api.route(views.TripList, 'trip_list', '/api/trips', '/api/members/<int:member_id>/trips', '/api/boats/<int:boat_id>/trips')
-api.route(views.TripDetail, 'trip_detail', '/api/trips/<int:id>')
-api.route(views.TripRelationship, 'trip_boat', '/api/trips/<int:id>/relationships/boat')
-api.route(views.TripRelationship, 'trip_member', '/api/trips/<int:id>/relationships/member')
+api.route(models.TripList, 'trip_list', '/api/trips', '/api/members/<int:member_id>/trips', '/api/boats/<int:boat_id>/trips')
+api.route(models.TripDetail, 'trip_detail', '/api/trips/<int:id>')
+api.route(models.TripRelationship, 'trip_boat', '/api/trips/<int:id>/relationships/boat')
+api.route(models.TripRelationship, 'trip_member', '/api/trips/<int:id>/relationships/member')
 
-api.route(views.BoatList, 'boat_list', '/api/boats')
-api.route(views.BoatDetail, 'boat_detail', '/api/boats/<int:id>', '/api/trips/<int:trip_id>/boat')
-api.route(views.BoatRelationship, 'boat_trips', '/api/boats/<int:id>/relationships/trips')
+api.route(models.BoatList, 'boat_list', '/api/boats')
+api.route(models.BoatDetail, 'boat_detail', '/api/boats/<int:id>', '/api/trips/<int:trip_id>/boat')
+api.route(models.BoatRelationship, 'boat_trips', '/api/boats/<int:id>/relationships/trips')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
