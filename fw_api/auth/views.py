@@ -1,5 +1,9 @@
 from flask import request, jsonify
+from flask_jwt_extended import create_access_token
 from ..auth import auth
+from fw_api import db
+from fw_api.models import Member
+import hashlib
 
 
 @auth.route('/auth/login', methods=['POST'])
