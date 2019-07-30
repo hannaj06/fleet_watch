@@ -12,7 +12,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data/pgdata
 
-  fleet_watch_app:
+  fleet_watch_backend:
     image: fleet_watch
     build:
       context: .
@@ -33,3 +33,19 @@ services:
       - "443:443"
     command:
       - "bash"
+
+  fleet_watch_frontend:
+    image: node:11-alpine
+    working_dir: /root
+    restart: "no"
+    depends_on:
+      - fleet_watch_db
+      - fleet_watch_backend
+    volumes:
+      - ./ui:/root
+    ports:
+      - 3000:3000
+    stdin_open: true
+    tty: true
+    command:
+      - "/bin/sh"

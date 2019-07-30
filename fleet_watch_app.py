@@ -13,8 +13,6 @@ from fw_api import models
 from fw_api import db, jwt, app
 from fw_api.auth import auth
 from fw_api.members import members
-
-import hashlib
 import json
 
 
