@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaUser, FaShip } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import { Nav, Link } from './components';
 import { useAuthState } from '../contexts/states/auth-state';
 
@@ -16,8 +16,10 @@ function Header() {
     <div className="bg-white fixed w-full z-10 top-0 shadow">
       <div className="w-full container mx-auto flex flex-wrap items-center mt-0 pt-3 pb-3 md:pb-0">
         <div className="w-1/2 pl-2 md:pl-0 text-blue-800">
-          <FaShip className="text-4xl inline-block pr-3 align-middle" />
-          <h1 className="text-2xl inline-block align-middle">Fleet Watch</h1>
+          {/* <FaShip className="text-4xl inline-block pr-3 align-middle" /> */}
+          <h1 className="text-2xl font-bold inline-block align-middle app-title">
+            Fleet Watch
+          </h1>
         </div>
         <div className="w-1/2 pr-0">
           <div className="flex relative inline-block float-right">
@@ -25,7 +27,7 @@ function Header() {
               {member ? (
                 <button
                   id="userButton"
-                  className="flex items-center focus:outline-none mr-3"
+                  className="flex items-center focus:outline-none mr-3 pt-2"
                   onClick={() => setShowMenu(!showMenu)}
                 >
                   <FaUser className="mr-3" />

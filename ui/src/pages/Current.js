@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
 import { zip } from '../utils';
+import { Loader } from '../components/components';
 
 function Current() {
-  const [trips, setTrips] = useState([]);
+  const [trips, setTrips] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +59,7 @@ function Current() {
       </tbody>
     </table>
   ) : (
-    <div>Loading...</div>
+    <Loader />
   );
 }
 

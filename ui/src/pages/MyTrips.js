@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import api from '../api/client';
 import { zip } from '../utils';
-import { useInputValue, useNumberValue } from '../hooks/use-input-value';
+import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
+import { Loader } from '../components/components';
 import Select from 'react-select';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const METER_THRESHOLD = 10000;
 
@@ -13,8 +16,8 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
     value: tripBoat ? tripBoat.attributes.boatName : '',
     label: tripBoat ? tripBoat.attributes.boatName : '',
   });
-  const launch = useInputValue(trip.attributes.launch);
-  const land = useInputValue(trip.attributes.land);
+  const [launch, setLaunch] = useState(new Date());
+  const [land, setLand] = useState();
   const meters = useNumberValue(trip.attributes.meters);
 
   const deleteTrip = async (trip) => {
@@ -28,8 +31,8 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
 
   const saveTrip = async (trip) => {
     await api.update(trip.id, 'trip', {
-      launch: launch.value,
-      land: land.value,
+      launch,
+      land,
       meters: meters.value,
     });
     await api.updateRelationship(trip.id, 'trip', boat.value, 'boat');
@@ -57,14 +60,28 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
         />
       </td>
       <td className="table-td text-right w-40">
-        <input
+        <DatePicker
           className="form-input text-right"
           name="launch"
-          {...launch}
-        ></input>
+          showTimeInput
+          timeFormat="HH:mm"
+          dateFormat="MMMM d, yyyy h:mm aa"
+          timeCaption="Time: "
+          selected={launch}
+          onChange={(val) => setLaunch(val)}
+        />
       </td>
       <td className="table-td text-right w-40">
-        <input className="form-input text-right" name="land" {...land}></input>
+        <DatePicker
+          className="form-input text-right"
+          name="land"
+          showTimeInput
+          timeFormat="HH:mm"
+          dateFormat="MMMM d, yyyy h:mm aa"
+          timeCaption="Time: "
+          selected={land}
+          onChange={(val) => setLand(val)}
+        />
       </td>
       <td className="table-td text-right w-40">
         <input
@@ -94,7 +111,9 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
       </td>
       <td className="table-td text-right">
         <span className="responsive-cell-label">Land</span>
-        <span className="cell-text">{trip.attributes.land}</span>
+        <span className="cell-text">
+          {trip.attributes.land || 'On the water'}
+        </span>
       </td>
       <td className="table-td text-right">
         <span className="responsive-cell-label">Meters</span>
@@ -115,7 +134,7 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
 function MyTrips() {
   const [{ member }] = useAuthState();
   const [boats, setBoats] = useState([]);
-  const [trips, setTrips] = useState([]);
+  const [trips, setTrips] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,7 +162,7 @@ function MyTrips() {
     dataCallback();
   }, [dataCallback]);
 
-  const totalMeters = trips.reduce((acc, [trip]) => {
+  const totalMeters = (trips || []).reduce((acc, [trip]) => {
     return acc + trip.attributes.meters;
   }, 0);
 
@@ -162,7 +181,10 @@ function MyTrips() {
           </thead>
           <tbody>
             {trips.map(([trip, boat]) => (
-              <tr key={trip.id}>
+              <tr
+                className={trip.attributes.land !== null ? '' : 'in-progress'}
+                key={trip.id}
+              >
                 <TableRow
                   fetchData={fetchData}
                   boats={boats}
@@ -189,7 +211,7 @@ function MyTrips() {
       </div>
     </>
   ) : (
-    <div>Loading...</div>
+    <Loader />
   );
 }
 

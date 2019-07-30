@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import api from '../api/client';
-import { useInputValue, useNumberValue } from '../hooks/use-input-value';
+import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
 import AsyncSelect from 'react-select/async';
 import { Redirect } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Row() {
   const [{ member }] = useAuthState();
-  const launch = useInputValue('');
-  const land = useInputValue('');
+  const [launch, setLaunch] = useState(new Date());
+  const [land, setLand] = useState();
   const meters = useNumberValue(0);
   const [boat, setBoat] = useState();
   const [shouldCancel, setShouldCancel] = useState(false);
@@ -30,8 +32,8 @@ function Row() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const attributes = {
-      launch: launch.value,
-      land: land.value,
+      launch,
+      land,
       meters: meters.value,
     };
     try {
@@ -52,7 +54,7 @@ function Row() {
           <label className="form-label" htmlFor="boat">
             Boat
           </label>
-          <div className="inline-block relative w-64">
+          <div className="inline-block relative w-full">
             <AsyncSelect
               defaultOptions
               loadOptions={boatPromise}
@@ -64,13 +66,31 @@ function Row() {
           <label className="form-label" htmlFor="launch">
             Launch
           </label>
-          <input className="form-input" name="launch" {...launch}></input>
+          <DatePicker
+            className="form-input"
+            name="launch"
+            showTimeInput
+            timeFormat="HH:mm"
+            dateFormat="MMMM d, yyyy h:mm aa"
+            timeCaption="Time: "
+            selected={launch}
+            onChange={(val) => setLaunch(val)}
+          />
         </div>
         <div className="mb-4">
           <label className="form-label" htmlFor="land">
             Land
           </label>
-          <input className="form-input" name="land" {...land}></input>
+          <DatePicker
+            className="form-input"
+            name="land"
+            showTimeInput
+            timeFormat="HH:mm"
+            dateFormat="MMMM d, yyyy h:mm aa"
+            timeCaption="Time: "
+            selected={land}
+            onChange={(val) => setLand(val)}
+          />
         </div>
         <div className="mb-6">
           <label className="form-label" htmlFor="meters">
