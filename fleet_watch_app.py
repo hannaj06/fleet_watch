@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_jwt_extended import (
   JWTManager, jwt_required, create_access_token,
   get_jwt_identity
@@ -11,11 +11,13 @@ from flask_rest_jsonapi import Api
 from sqlalchemy.orm.exc import NoResultFound
 from fw_api import models
 from fw_api import db, jwt, app
-import hashlib
+from fw_api.auth import auth
+from fw_api.members import members
 import json
 
+home = Blueprint('home', __name__,)
 
-@app.route('/')
+@home.route('/')
 def hello_world():
     var = {"api_version": "1", "key": "pair"}
     return json.dumps(var)
@@ -41,32 +43,9 @@ def get_me():
 
   return jsonify(session), 200
 
-@app.route('/api/auth/login', methods=['POST'])
-def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    email = request.json.get('email', None)
-    password = request.json.get('password', None)
-    md = hashlib.md5()
-    md.update(password.encode('utf-8'))
-    password_hash = md.hexdigest()
-    if not email:
-        return jsonify({"msg": "Missing email parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
-
-    if email == 'invalid' or password == 'invalid':
-        return jsonify({"msg": "Bad email or password"}), 401
-
-    q = db.session.query(
-        models.Member.email,
-        models.Member.password).filter(
-                models.Member.email==email, models.Member.password==password_hash)
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=email)
-    return jsonify(token=access_token), 200
+app.register_blueprint(auth)
+app.register_blueprint(home)
+app.register_blueprint(members)
 
 api = Api(app)
 api.route(models.MemberList, 'member_list', '/api/members')
