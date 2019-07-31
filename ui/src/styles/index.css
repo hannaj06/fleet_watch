@@ -124,3 +124,21 @@ body {
     @apply border-gray-500;
   }
 }
+
+.in-progress {
+  td {
+    @apply italic bg-green-200;
+  }
+}
+
+.react-datepicker-wrapper {
+  @apply w-full;
+}
+
+.react-datepicker__input-container {
+  @apply w-full;
+}
+
+.app-title {
+  text-shadow: 2px 2px rgba(44, 82, 130, 0.1);
+}

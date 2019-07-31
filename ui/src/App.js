@@ -9,9 +9,18 @@ import { AuthStateProvider } from './contexts/states/auth-state';
 import authReducer, { initialState } from './contexts/reducers/auth-reducer';
 import { coordinator } from './api/client';
 import useAuth from './hooks/use-auth';
-import { Current, Login, Logout, MyTrips, Profile, Row } from './pages/pages';
-import { Header, PrivateRoute } from './components/components';
+import {
+  Current,
+  Login,
+  Logout,
+  MyTrips,
+  Profile,
+  Row,
+  Weather,
+} from './pages/pages';
+import { Header, PrivateRoute, Loader } from './components/components';
 import { LogLevel } from '@orbit/coordinator';
+import { Container } from './services/notifications';
 
 function App() {
   useEffect(() => {
@@ -30,7 +39,7 @@ function App() {
   console.info('Current Member ', member);
 
   return isLoading ? (
-    <div>Loading...</div>
+    <Loader />
   ) : (
     <Router>
       <div className="font-sans leading-normal tracking-normal">
@@ -45,6 +54,7 @@ function App() {
                 <PrivateRoute path="/row" component={Row} />
                 <PrivateRoute path="/my-trips" component={MyTrips} />
                 <PrivateRoute path="/profile" component={Profile} />
+                <Route path="/weather" component={Weather} />
                 <Route path="/login" component={Login} />
                 <PrivateRoute path="/logout" component={Logout} />
               </Switch>
@@ -60,6 +70,7 @@ export default () => {
   return (
     <AuthStateProvider reducer={authReducer} initialState={initialState}>
       <App />
+      <Container />
     </AuthStateProvider>
   );
 };
