@@ -15,17 +15,12 @@ from fw_api.auth import auth
 from fw_api.members import members
 import json
 
-
 home = Blueprint('home', __name__,)
-
-
-print(app)
 
 @home.route('/')
 def hello_world():
     var = {"api_version": "1", "key": "pair"}
     return json.dumps(var)
-
 
 @app.route('/api/sessions/current')
 @jwt_required
@@ -48,12 +43,9 @@ def get_me():
 
   return jsonify(session), 200
 
-
 app.register_blueprint(auth)
 app.register_blueprint(home)
 app.register_blueprint(members)
-
-
 
 api = Api(app)
 api.route(models.MemberList, 'member_list', '/api/members')
