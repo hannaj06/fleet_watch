@@ -59,6 +59,15 @@ coordinator.addStrategy(
       }
       return true;
     },
+    catch(e) {
+      // https://github.com/orbitjs/orbit/issues/653
+      setTimeout(() => {
+        this.source.requestQueue.skip();
+        this.target.requestQueue.skip();
+      }, 0);
+
+      throw e;
+    },
   })
 );
 
