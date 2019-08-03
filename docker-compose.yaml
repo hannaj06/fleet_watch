@@ -16,36 +16,29 @@ services:
     image: fleet_watch
     build:
       context: .
-      dockerfile: Dockerfile
-    restart: "no"
+      dockerfile: api/Dockerfile
     depends_on:
       - fleet_watch_db
     environment:
       - DB_CONN_STR=postgresql+psycopg2:://fleet_watch:knlzlEI90kMc@fleet_watch_db:5433/fleet_watch
       - FLASK_ENV=development
       - FLASK_APP=fleet_watch_app.py
+      - LISTEN_PORT=5000
     volumes:
-      - .:/app
-    stdin_open: true
-    tty: true
+      - ./api:/app
     ports:
       - "5000:5000"
       - "443:443"
-    command:
-      - "bash"
 
   fleet_watch_frontend:
-    image: node:11-alpine
-    working_dir: /root
-    restart: "no"
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
     depends_on:
       - fleet_watch_db
       - fleet_watch_backend
     volumes:
-      - ./ui:/root
+      - ./ui:/app
+      - /app/node_modules
     ports:
       - 3000:3000
-    stdin_open: true
-    tty: true
-    command:
-      - "/bin/sh"

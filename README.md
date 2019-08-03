@@ -2,19 +2,11 @@
 
 Manage your boat fleet from anywhere you have internet connectivity.
 
-### Quick Start w/Docker for Development
+## Prerequisites
 
-```bash
-docker-compose up -d
-docker exec -it fleet_watch_fleet_watch_app_1 bash
-bash startup.sh
-```
-
-### Stop Running Containers
-
-```bash
-docker-compose down
-```
+- [Docker](https://docs.docker.com/install/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- That's it... no... really
 
 ### Install docker (ubuntu)
 
@@ -28,4 +20,24 @@ sudo usermod -aG docker your-user
 
 ```bash
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+
+## Quick Start w/Docker for Development
+
+### Build
+
+```bash
+scripts/build.sh
+```
+
+### Running
+
+```bash
+scripts/start.sh
+```
+
+### Stop Running Containers
+
+```bash
+scripts/stop.sh
 ```
