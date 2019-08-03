@@ -16,7 +16,7 @@ services:
     image: fleet_watch
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: api/Dockerfile
     depends_on:
       - fleet_watch_db
     environment:
@@ -25,7 +25,7 @@ services:
       - FLASK_APP=fleet_watch_app.py
       - LISTEN_PORT=5000
     volumes:
-      - .:/app
+      - ./api:/app
     ports:
       - "5000:5000"
       - "443:443"
