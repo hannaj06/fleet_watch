@@ -2,3 +2,4 @@ api/pgdata
 ui/node_modules
 ui/build
 ui/.ash_history
+pgdata
