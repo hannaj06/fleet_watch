@@ -6,7 +6,6 @@
     "@orbit/coordinator": "^0.16.0",
     "@orbit/core": "^0.16.0",
     "@orbit/data": "^0.16.0",
-    "@orbit/indexeddb": "^0.16.0",
     "@orbit/jsonapi": "^0.16.0",
     "@orbit/memory": "^0.16.0",
     "@orbit/utils": "^0.16.0",
