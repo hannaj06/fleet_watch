@@ -1,4 +1,4 @@
-import Store from '@orbit/store';
+import Store from '@orbit/memory';
 import Coordinator from '@orbit/coordinator';
 import schema from '../../data/schema';
 import { getRandom, getAllBoats, generateTrip, generateMember } from './utils';
@@ -47,10 +47,6 @@ if (process.env.REACT_APP_MOCK === 'true') {
   store.update((t) => boats.map((boat) => t.addRecord(boat)));
   store.update((t) => trips.map((trip) => t.addRecord(trip)));
   store.update((t) => myTrips.map((trip) => t.addRecord(trip)));
-
-  store.on('transform', (transform) => {
-    console.debug(transform);
-  });
 }
 
 export { coordinator, store };

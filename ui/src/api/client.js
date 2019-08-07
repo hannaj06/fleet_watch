@@ -63,7 +63,7 @@ let api = {
     return store.update((t) => t.removeRecord({ type, id }));
   },
 
-  getMember() {
+  getSession() {
     const { id } = recordIdentityFromKeys({
       type: 'session',
       keys: { remoteId: 'current' },

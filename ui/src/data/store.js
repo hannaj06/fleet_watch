@@ -1,4 +1,4 @@
-import Store from '@orbit/store';
+import MemorySource from '@orbit/memory';
 import { KeyMap } from '@orbit/data';
 import JSONAPISource, { JSONAPISerializer } from '@orbit/jsonapi';
 import Coordinator, { RequestStrategy, SyncStrategy } from '@orbit/coordinator';
@@ -9,7 +9,7 @@ const { API_ROOT } = config;
 
 const keyMap = new KeyMap();
 
-const store = new Store({ schema, keyMap });
+const memory = new MemorySource({ schema, keyMap });
 
 const recordIdentityFromKeys = ({ type, id, keys }) => {
   const recordIdentity = {
@@ -25,6 +25,9 @@ class CustomJSONAPISerializer extends JSONAPISerializer {
   resourceKey(type) {
     return 'remoteId';
   }
+  recordType(type) {
+    return type;
+  }
 }
 
 const remote = new JSONAPISource({
@@ -36,7 +39,7 @@ const remote = new JSONAPISource({
 });
 
 const coordinator = new Coordinator({
-  sources: [store, remote],
+  sources: [memory, remote],
 });
 
 // Log all the things
@@ -45,7 +48,7 @@ const coordinator = new Coordinator({
 // Query the remote server whenever the store is queried
 coordinator.addStrategy(
   new RequestStrategy({
-    source: 'store',
+    source: 'memory',
     on: 'beforeQuery',
     target: 'remote',
     action: 'pull',
@@ -61,11 +64,11 @@ coordinator.addStrategy(
     },
     catch(e) {
       // https://github.com/orbitjs/orbit/issues/653
+      console.log('beforeQuery error');
       setTimeout(() => {
         this.source.requestQueue.skip();
         this.target.requestQueue.skip();
       }, 0);
-
       throw e;
     },
   })
@@ -74,11 +77,34 @@ coordinator.addStrategy(
 // Update the remote server whenever the store is updated
 coordinator.addStrategy(
   new RequestStrategy({
-    source: 'store',
+    source: 'memory',
+    on: 'query',
+    catch(e) {
+      console.log('pull error');
+      setTimeout(() => {
+        this.source.requestQueue.skip();
+        this.target.requestQueue.skip();
+      }, 0);
+      throw e;
+    },
+  })
+);
+
+coordinator.addStrategy(
+  new RequestStrategy({
+    source: 'memory',
     on: 'beforeUpdate',
     target: 'remote',
     action: 'push',
     blocking: false,
+    catch(e) {
+      console.log('beforeUpdate error');
+      setTimeout(() => {
+        this.source.requestQueue.skip();
+        this.target.requestQueue.skip();
+      }, 0);
+      throw e;
+    },
   })
 );
 
@@ -86,9 +112,19 @@ coordinator.addStrategy(
 coordinator.addStrategy(
   new SyncStrategy({
     source: 'remote',
-    target: 'store',
+    target: 'memory',
     blocking: false,
+    catch(e) {
+      console.log('sync error');
+      setTimeout(() => {
+        this.source.requestQueue.skip();
+        this.target.requestQueue.skip();
+      }, 0);
+      throw e;
+    },
   })
 );
+
+const store = memory;
 
 export { coordinator, store, recordIdentityFromKeys };
