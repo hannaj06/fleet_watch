@@ -38,7 +38,7 @@ function Login() {
             placeholder="Email"
             className="form-input"
             {...email}
-          ></input>
+          />
         </div>
         <div className="mb-6">
           <label className="form-label" htmlFor="password">
@@ -50,7 +50,7 @@ function Login() {
             placeholder="Password"
             className="form-input"
             {...password}
-          ></input>
+          />
         </div>
         <div className="flex items-center justify-between">
           <button className="btn confirm" type="submit">
