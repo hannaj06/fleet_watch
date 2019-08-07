@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Redirect,
@@ -22,12 +22,15 @@ import { Header, PrivateRoute, Loader } from './components/components';
 import { LogLevel } from '@orbit/coordinator';
 import { Container } from './services/notifications';
 
-function App() {
+function Wrapper() {
+  let [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
     console.info('Activating Coordinator');
     const activate = async () => {
       try {
         await coordinator.activate({ logLevel: LogLevel.Info });
+        setIsLoaded(true);
+        console.log('Coordinator activated');
       } catch (e) {
         console.error(e);
       }
@@ -35,6 +38,10 @@ function App() {
     activate();
   }, []);
 
+  return isLoaded ? <App /> : <></>;
+}
+
+function App() {
   const { member, isLoading } = useAuth();
   console.info('Current Member ', member);
 
@@ -69,7 +76,7 @@ function App() {
 export default () => {
   return (
     <AuthStateProvider reducer={authReducer} initialState={initialState}>
-      <App />
+      <Wrapper />
       <Container />
     </AuthStateProvider>
   );
