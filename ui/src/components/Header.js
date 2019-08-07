@@ -13,7 +13,7 @@ function Header() {
   };
 
   return (
-    <div className="bg-white fixed w-full z-10 top-0 shadow">
+    <div className="bg-white fixed w-full z-10 top-0 shadow-md">
       <div className="w-full container mx-auto flex flex-wrap items-center mt-0 pt-3 pb-3 md:pb-0">
         <div className="w-1/2 pl-2 md:pl-0 text-blue-800">
           {/* <FaShip className="text-4xl inline-block pr-3 align-middle" /> */}
@@ -43,7 +43,7 @@ function Header() {
                     enableBackground="new 0 0 129 129"
                   >
                     <g>
-                      <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z"></path>
+                      <path d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z" />
                     </g>
                   </svg>
                 </button>
@@ -96,7 +96,7 @@ function Header() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <title>Menu</title>
-                  <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+                  <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
                 </svg>
               </button>
             </div>

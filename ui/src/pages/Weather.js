@@ -43,7 +43,11 @@ function Weather() {
               </span>
             </div>
             <div className="w-32 h-32 flex items-center justify-center">
-              <img src={weatherItem.icon} alt={weatherItem.shortForecast} />
+              <img
+                className="shadow"
+                src={weatherItem.icon}
+                alt={weatherItem.shortForecast}
+              />
             </div>
             <p className="text-gray-700 mb-2">{weatherItem.shortForecast}</p>
             <div className="text-3xl font-bold text-gray-900 mb-3">

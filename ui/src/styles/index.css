@@ -7,7 +7,7 @@ body {
 }
 
 .table {
-  @apply bg-white text-left w-full border-collapse text-sm rounded-sm;
+  @apply bg-white text-left w-full border-collapse text-sm rounded-sm shadow-md;
   tr:nth-child(even) {
     @apply bg-gray-100;
   }
@@ -58,7 +58,7 @@ body {
 .form-input {
   @apply shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight;
   &:focus {
-    @apply outline-none shadow-outline shadow-md;
+    @apply outline-none shadow-outline shadow-lg;
   }
 }
 
