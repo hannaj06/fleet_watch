@@ -9,7 +9,7 @@ function configureOrbit(token) {
   const header = `Bearer ${token}`;
   const remote = coordinator.sources.find((source) => source.name === 'remote');
   if (remote) {
-    remote.defaultFetchSettings.headers = {
+    remote.requestProcessor.defaultFetchSettings.headers = {
       Authorization: header,
     };
   }
@@ -23,7 +23,7 @@ const useAuth = () => {
   useEffect(() => {
     const existingToken = localStorage[tokenKey];
     if (existingToken) {
-      console.info('Restoring token from local storage');
+      console.info('Restoring token from local storage', existingToken);
       dispatch({
         type: 'SET_TOKEN',
         auth: { token: existingToken },
@@ -36,7 +36,7 @@ const useAuth = () => {
       const fetchUser = async () => {
         try {
           console.info('Fetching current member');
-          const data = await api.getMember();
+          const data = await api.getSession();
           const id = data.relationships.member.data.id;
           const user = await api.findRecord('member', id);
           dispatch({ type: 'LOAD_MEMBER', member: user });
