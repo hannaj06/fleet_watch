@@ -17,6 +17,7 @@ const useAuth = () => {
           dispatch({ type: 'LOAD_MEMBER', member: user });
         } catch (e) {
           console.error(e);
+          await api.logout();
           dispatch({ type: 'LOGOUT' });
         }
       };
