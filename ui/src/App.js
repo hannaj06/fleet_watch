@@ -30,7 +30,7 @@ function Wrapper() {
       try {
         await coordinator.activate({ logLevel: LogLevel.Info });
         setIsLoaded(true);
-        console.log('Coordinator activated');
+        console.info('Coordinator activated');
       } catch (e) {
         console.error(e);
       }

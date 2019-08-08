@@ -23,6 +23,7 @@ sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-
 ```
 
 ## Quick Start w/Docker for Development
+
 See Makefile for more details
 
 ### Build
@@ -35,6 +36,10 @@ make build
 
 ```bash
 make start
+```
+
+```bash
+make run
 ```
 
 ### Run Migrations
