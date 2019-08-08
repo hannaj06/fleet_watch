@@ -38,6 +38,8 @@ const remote = new JSONAPISource({
   SerializerClass: CustomJSONAPISerializer,
 });
 
+remote.requestProcessor.defaultFetchSettings.credentials = 'include';
+
 const coordinator = new Coordinator({
   sources: [memory, remote],
 });

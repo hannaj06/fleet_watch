@@ -14,8 +14,8 @@ function Login() {
     e.preventDefault();
     setAuthAttempted(true);
     try {
-      const { data: auth } = await api.login(email.value, password.value);
-      dispatch({ type: 'LOGIN', auth });
+      await api.login(email.value, password.value);
+      dispatch({ type: 'LOGIN' });
     } catch (e) {
       console.error(e);
       setAuthAttempted(false);

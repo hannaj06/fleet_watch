@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, Blueprint
 from flask_jwt_extended import (
-  JWTManager, jwt_required, create_access_token,
-  get_jwt_identity
+  JWTManager, jwt_required, jwt_refresh_token_required, create_access_token,
+  get_jwt_identity, get_raw_jwt, unset_jwt_cookies, set_access_cookies
 )
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -42,6 +42,25 @@ def get_me():
   }
 
   return jsonify(session), 200
+
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    resp = jsonify({'logout': True})
+    unset_jwt_cookies(resp)
+    return resp, 200
+
+@app.route('/token/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    # Create the new access token
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+
+    # Set the access JWT and CSRF double submit protection cookies
+    # in this response
+    resp = jsonify({'refresh': True})
+    set_access_cookies(resp, access_token)
+    return resp, 200
 
 app.register_blueprint(auth)
 app.register_blueprint(home)

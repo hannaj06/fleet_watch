@@ -1,5 +1,7 @@
 from flask import request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies
+)
 from ..auth import auth
 from fw_api import db
 from fw_api.models import Member
@@ -31,4 +33,8 @@ def login():
 
     # Identity can be any data that is json serializable
     access_token = create_access_token(identity=email)
-    return jsonify(token=access_token), 200
+    refresh_token = create_refresh_token(identity=email)
+    resp = jsonify({'login': True})
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, access_token)
+    return resp, 200

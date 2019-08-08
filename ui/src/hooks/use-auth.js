@@ -1,38 +1,13 @@
 import { useEffect } from 'react';
-import config from '../config';
 import { useAuthState } from '../contexts/states/auth-state';
-import api, { coordinator } from '../api/client';
-
-const { tokenKey } = config;
-
-function configureOrbit(token) {
-  const header = `Bearer ${token}`;
-  const remote = coordinator.sources.find((source) => source.name === 'remote');
-  if (remote) {
-    remote.requestProcessor.defaultFetchSettings.headers = {
-      Authorization: header,
-    };
-  }
-}
+import api from '../api/client';
 
 const useAuth = () => {
   const [state, dispatch] = useAuthState();
-  const { auth = {} } = state;
-  const { token, member } = auth;
+  const { member, isLoggedIn } = state;
 
   useEffect(() => {
-    const existingToken = localStorage[tokenKey];
-    if (existingToken) {
-      console.info('Restoring token from local storage', existingToken);
-      dispatch({
-        type: 'SET_TOKEN',
-        auth: { token: existingToken },
-      });
-      dispatch({
-        type: 'AUTH',
-        isLoading: true,
-      });
-      configureOrbit(existingToken);
+    if (document.cookie) {
       const fetchUser = async () => {
         try {
           console.info('Fetching current member');
@@ -47,9 +22,9 @@ const useAuth = () => {
       };
       if (!member) fetchUser();
     } else {
-      dispatch({ type: 'AUTH', isLoading: false });
+      dispatch({ type: 'LOGOUT' });
     }
-  }, [token, member, dispatch]);
+  }, [isLoggedIn, member, dispatch]);
 
   return state;
 };

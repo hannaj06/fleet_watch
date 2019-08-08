@@ -2,25 +2,29 @@ import adapter from './adapter';
 import {
   coordinator as realCoordinator,
   store as realStore,
-  recordIdentityFromKeys,
+  recordIdentityFromKeys as realRecordIdentityFromKeys,
 } from '../data/store';
 import {
   coordinator as mockCoordinator,
   store as mockStore,
+  recordIdentityFromKeys as mockRecordIdentityFromKeys,
 } from '../test/mocks/store';
 import mockClient from '../test/mocks/server';
 
 const isMock = process.env.REACT_APP_MOCK === 'true';
 const store = isMock ? mockStore : realStore;
 const coordinator = isMock ? mockCoordinator : realCoordinator;
+const recordIdentityFromKeys = isMock
+  ? mockRecordIdentityFromKeys
+  : realRecordIdentityFromKeys;
 
 let api = {
   login(email, password) {
     return adapter.post('auth/login', { email, password });
   },
 
-  logout(token) {
-    return adapter.post('auth/logout', { token });
+  logout() {
+    return adapter.post('auth/logout');
   },
 
   findRecord(type, id) {

@@ -29,11 +29,11 @@ function Wrapper() {
     const activate = async () => {
       try {
         await coordinator.activate({ logLevel: LogLevel.Info });
-        setIsLoaded(true);
         console.info('Coordinator activated');
       } catch (e) {
         console.error(e);
       }
+      setIsLoaded(true);
     };
     activate();
   }, []);

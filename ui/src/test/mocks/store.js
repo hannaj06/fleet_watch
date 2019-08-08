@@ -1,13 +1,21 @@
-import Store from '@orbit/memory';
+import MemorySource from '@orbit/memory';
+import { KeyMap } from '@orbit/data';
 import Coordinator from '@orbit/coordinator';
 import schema from '../../data/schema';
 import { getRandom, getAllBoats, generateTrip, generateMember } from './utils';
 
 let store = {};
 let coordinator = {};
+let recordIdentityFromKeys = () => {};
+
+const keyMap = new KeyMap();
 
 if (process.env.REACT_APP_MOCK === 'true') {
-  store = new Store({ schema, name: 'default' });
+  recordIdentityFromKeys = () => {
+    return { id: 'current' };
+  };
+
+  store = new MemorySource({ schema, keyMap });
 
   coordinator = new Coordinator({
     sources: [store],
@@ -19,6 +27,14 @@ if (process.env.REACT_APP_MOCK === 'true') {
     attributes: {
       firstName: 'Jane',
       lastName: 'Doe',
+    },
+  };
+
+  const session = {
+    type: 'session',
+    id: 'current',
+    relationships: {
+      member: { data: { type: 'member', id: 'me' } },
     },
   };
 
@@ -43,10 +59,11 @@ if (process.env.REACT_APP_MOCK === 'true') {
   const boats = getAllBoats();
 
   store.update((t) => [t.addRecord(member)]);
+  store.update((t) => [t.addRecord(session)]);
   store.update((t) => members.map((member) => t.addRecord(member)));
   store.update((t) => boats.map((boat) => t.addRecord(boat)));
   store.update((t) => trips.map((trip) => t.addRecord(trip)));
   store.update((t) => myTrips.map((trip) => t.addRecord(trip)));
 }
 
-export { coordinator, store };
+export { coordinator, store, recordIdentityFromKeys };
