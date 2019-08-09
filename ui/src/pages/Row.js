@@ -4,8 +4,11 @@ import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
 import AsyncSelect from 'react-select/async';
 import { Redirect } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Form from '../components/Form';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import DateInput from '../components/DateInput';
 
 function Row() {
   const [{ member }] = useAuthState();
@@ -16,7 +19,6 @@ function Row() {
   const [shouldCancel, setShouldCancel] = useState(false);
 
   const cancel = (e) => {
-    e.preventDefault();
     setShouldCancel(true);
   };
 
@@ -30,7 +32,6 @@ function Row() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     const attributes = {
       launch,
       land,
@@ -49,7 +50,7 @@ function Row() {
     <Redirect to="/my-trips" />
   ) : (
     <div className="m-auto max-w-sm">
-      <form className="form" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="form-label" htmlFor="boat">
             Boat
@@ -63,50 +64,38 @@ function Row() {
           </div>
         </div>
         <div className="mb-4">
-          <label className="form-label" htmlFor="launch">
-            Launch
-          </label>
-          <DatePicker
-            className="form-input"
+          <DateInput
+            label="Launch"
             name="launch"
-            showTimeInput
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
-            timeCaption="Time: "
             selected={launch}
             onChange={(val) => setLaunch(val)}
-          />
+          ></DateInput>
         </div>
         <div className="mb-4">
-          <label className="form-label" htmlFor="land">
-            Land
-          </label>
-          <DatePicker
-            className="form-input"
+          <DateInput
+            label="Land"
             name="land"
-            showTimeInput
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
-            timeCaption="Time: "
             selected={land}
             onChange={(val) => setLand(val)}
-          />
+          ></DateInput>
         </div>
         <div className="mb-6">
-          <label className="form-label" htmlFor="meters">
-            Meters
-          </label>
-          <input className="form-input" name="meters" {...meters}></input>
+          <Input
+            label="Meters"
+            name="meters"
+            placeholder="Meters"
+            {...meters}
+          />
         </div>
         <div className="flex items-center justify-between">
-          <button className="btn cancel" onClick={cancel}>
+          <Button kind="cancel" onClick={cancel}>
             Cancel
-          </button>
-          <button className="btn confirm" type="submit">
+          </Button>
+          <Button kind="confirm" type="submit">
             Save
-          </button>
+          </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

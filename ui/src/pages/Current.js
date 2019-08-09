@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
 import { zip } from '../utils';
-import { Loader } from '../components/components';
+import { Loader } from '../components';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeader,
+  TableCell,
+} from '../components/Table';
 
 function Current() {
   const [trips, setTrips] = useState();
@@ -27,37 +35,34 @@ function Current() {
   }, []);
 
   return trips ? (
-    <table className="table">
-      <thead className="thead">
-        <tr>
-          <th className="table-header">Name</th>
-          <th className="table-header">Boat</th>
-          <th className="table-header text-right">Launch</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableHeader>Name</TableHeader>
+          <TableHeader>Boat</TableHeader>
+          <TableHeader textRight={true}>Launch</TableHeader>
+        </TableRow>
+      </TableHead>
+      <TableBody>
         {trips.map(([trip, member, boat]) => (
-          <tr key={trip.id}>
-            <td className="table-td">
-              <span className="responsive-cell-label">Name</span>
-              <span className="cell-text">
-                {member.attributes.firstName} {member.attributes.lastName}
-              </span>
-            </td>
-            <td className="table-td">
-              <span className="responsive-cell-label">Boat</span>
-              <span className="cell-text">
-                {boat ? boat.attributes.boatName : ''}
-              </span>
-            </td>
-            <td className="table-td text-right">
-              <span className="responsive-cell-label">Launch</span>
-              <span className="cell-text">{trip.attributes.launch}</span>
-            </td>
-          </tr>
+          <TableRow key={trip.id}>
+            <TableCell
+              label="Name"
+              content={`${member.attributes.firstName} ${member.attributes.lastName}`}
+            />
+            <TableCell
+              label="Boat"
+              content={boat ? boat.attributes.boatName : ''}
+            />
+            <TableCell
+              textRight={true}
+              label="Launch"
+              content={trip.attributes.launch}
+            />
+          </TableRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   ) : (
     <Loader />
   );

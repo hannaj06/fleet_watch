@@ -5,6 +5,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
+import { LogLevel } from '@orbit/coordinator';
 import { AuthStateProvider } from './contexts/states/auth-state';
 import authReducer, { initialState } from './contexts/reducers/auth-reducer';
 import { coordinator } from './api/client';
@@ -17,29 +18,9 @@ import {
   Profile,
   Row,
   Weather,
-} from './pages/pages';
-import { Header, PrivateRoute, Loader } from './components/components';
-import { LogLevel } from '@orbit/coordinator';
+} from './pages';
+import { Header, PrivateRoute, Loader } from './components';
 import { Container } from './services/notifications';
-
-function Wrapper() {
-  let [isLoaded, setIsLoaded] = useState(false);
-  useEffect(() => {
-    console.info('Activating Coordinator');
-    const activate = async () => {
-      try {
-        await coordinator.activate({ logLevel: LogLevel.Info });
-        console.info('Coordinator activated');
-      } catch (e) {
-        console.error(e);
-      }
-      setIsLoaded(true);
-    };
-    activate();
-  }, []);
-
-  return isLoaded ? <App /> : <></>;
-}
 
 function App() {
   const { member, isLoading } = useAuth();
@@ -50,19 +31,21 @@ function App() {
   ) : (
     <Router>
       <div className="font-sans leading-normal tracking-normal">
-        <Header />
+        <Header member={member} />
 
         <main>
           <div className="container h-full w-full mx-auto pt-20 pb-2">
             <div className="justify-center w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
               <Switch>
                 <Redirect exact from="/" to="/current" />
+
                 <Route path="/current" component={Current} />
+                <Route path="/weather" component={Weather} />
+                <Route path="/login" component={Login} />
+
                 <PrivateRoute path="/row" component={Row} />
                 <PrivateRoute path="/my-trips" component={MyTrips} />
                 <PrivateRoute path="/profile" component={Profile} />
-                <Route path="/weather" component={Weather} />
-                <Route path="/login" component={Login} />
                 <PrivateRoute path="/logout" component={Logout} />
               </Switch>
             </div>
@@ -74,10 +57,27 @@ function App() {
 }
 
 export default () => {
-  return (
+  let [isReady, setIsReady] = useState(false);
+  useEffect(() => {
+    console.info('Activating Coordinator');
+    const activate = async () => {
+      try {
+        await coordinator.activate({ logLevel: LogLevel.Info });
+        console.info('Coordinator Activated');
+      } catch (e) {
+        console.error(e);
+      }
+      setIsReady(true);
+    };
+    activate();
+  }, []);
+
+  return isReady ? (
     <AuthStateProvider reducer={authReducer} initialState={initialState}>
-      <Wrapper />
+      <App />
       <Container />
     </AuthStateProvider>
+  ) : (
+    <></>
   );
 };
