@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow_jsonapi.flask import Schema, Relationship
 from marshmallow_jsonapi import fields
 from flask_rest_jsonapi import Api, ResourceDetail, ResourceList, ResourceRelationship
-from fw_api import db
+from fw_api import db, app
 
 class Member(db.Model):
     __tablename__ = 'members'
@@ -30,7 +30,7 @@ class Boat(db.Model):
 
 class MemberSchema(Schema):
     class Meta:
-        type_ = 'member'
+        type_ = 'members'
         self_view = 'member_detail'
         self_view_kwargs = {'id': '<id>'}
         self_view_many = 'member_list'
@@ -45,12 +45,12 @@ class MemberSchema(Schema):
                        related_view_kwargs={'member_id': '<member_id>'},
                        many=True,
                        schema='TripSchema',
-                       type_='trip',
+                       type_='trips',
                        id_field='trip_id')
 
 class TripSchema(Schema):
     class Meta:
-        type_ = 'trip'
+        type_ = 'trips'
         self_view = 'trip_detail'
         self_view_kwargs = {'id': '<id>'}
         self_view_many = 'trip_list'
@@ -65,18 +65,18 @@ class TripSchema(Schema):
                        related_view='member_detail',
                        related_view_kwargs={'trip_id': '<trip_id>'},
                        schema='MemberSchema',
-                       type_='member')
+                       type_='members')
     boat = Relationship(attribute='boat',
                        self_view='trip_boat',
                        self_view_kwargs={'id': '<trip_id>'},
                        related_view='boat_detail',
                        related_view_kwargs={'trip_id': '<trip_id>'},
                        schema='BoatSchema',
-                       type_='boat')
+                       type_='boats')
 
 class BoatSchema(Schema):
     class Meta:
-        type_ = 'boat'
+        type_ = 'boats'
         self_view = 'boat_detail'
         self_view_kwargs = {'id': '<id>'}
         self_view_many = 'boat_list'
@@ -89,7 +89,7 @@ class BoatSchema(Schema):
                        related_view_kwargs={'boat_id': '<boat_id>'},
                        many=True,
                        schema='TripSchema',
-                       type_='trip',
+                       type_='trips',
                        id_field='trip_id')
 
 class MemberList(ResourceList):

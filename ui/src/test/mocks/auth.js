@@ -1,3 +1,5 @@
+import { clearCookies } from '../../utils';
+
 const fakeAuth = {
   authenticate(valid = true) {
     return new Promise((resolve, reject) => {
@@ -14,13 +16,7 @@ const fakeAuth = {
   unauthenticate() {
     return new Promise((resolve, reject) => {
       return setTimeout(() => {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i];
-          const eqPos = cookie.indexOf('=');
-          const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-          document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        }
+        clearCookies();
         resolve();
       }, 200);
     });

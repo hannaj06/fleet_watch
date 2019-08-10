@@ -35,21 +35,23 @@ let api = {
     return store.query((q) => q.findRecords(type));
   },
 
-  createRecord(type, attributes) {
+  createRecord(type, attributes, relationships) {
     return store.update((t) =>
       t.addRecord({
         type,
         attributes,
+        relationships,
       })
     );
   },
 
-  update(id, type, attributes) {
+  update(id, type, attributes, relationships) {
     return store.update((t) =>
       t.replaceRecord({
         id,
         type,
         attributes,
+        relationships,
       })
     );
   },
@@ -83,7 +85,7 @@ let api = {
   },
 
   getMemberForTrip(trip) {
-    return store.query((q) =>
+    return store.cache.query((q) =>
       q.findRelatedRecord({ type: 'trip', id: trip.id }, 'member')
     );
   },
@@ -96,9 +98,7 @@ let api = {
 
   getTrips(member) {
     return store.query((q) =>
-      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips', {
-        sources: { remote: { include: ['boat', 'member'] } },
-      })
+      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips')
     );
   },
 

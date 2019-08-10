@@ -4,8 +4,12 @@ import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
 import AsyncSelect from 'react-select/async';
 import { Redirect } from 'react-router-dom';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Form from '../components/Form';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import DateInput from '../components/DateInput';
+import notifications from '../services/notifications';
 
 function Row() {
   const [{ member }] = useAuthState();
@@ -16,30 +20,32 @@ function Row() {
   const [shouldCancel, setShouldCancel] = useState(false);
 
   const cancel = (e) => {
-    e.preventDefault();
     setShouldCancel(true);
   };
 
   const boatPromise = async () => {
     const boats = await api.getAllBoats();
     return boats.map((option) => {
-      const value = option.attributes.boatName;
+      const value = option.id;
       const label = option.attributes.boatName;
       return { value, label };
     });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     const attributes = {
       launch,
       land,
       meters: meters.value,
     };
+    const relationships = {
+      member: { data: { type: 'member', id: member.id } },
+      boat: { data: { type: 'boat', id: boat } },
+    };
     try {
-      const trip = await api.createRecord('trip', attributes);
-      await api.updateRelationship(trip.id, 'trip', boat, 'boat');
-      await api.updateRelationship(trip.id, 'trip', member.id, 'member');
+      await api.createRecord('trip', attributes, relationships);
+      notifications.success('Created!');
+      setShouldCancel(true);
     } catch (e) {
       console.error(e);
     }
@@ -49,7 +55,7 @@ function Row() {
     <Redirect to="/my-trips" />
   ) : (
     <div className="m-auto max-w-sm">
-      <form className="form" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="form-label" htmlFor="boat">
             Boat
@@ -63,50 +69,38 @@ function Row() {
           </div>
         </div>
         <div className="mb-4">
-          <label className="form-label" htmlFor="launch">
-            Launch
-          </label>
-          <DatePicker
-            className="form-input"
+          <DateInput
+            label="Launch"
             name="launch"
-            showTimeInput
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
-            timeCaption="Time: "
             selected={launch}
             onChange={(val) => setLaunch(val)}
-          />
+          ></DateInput>
         </div>
         <div className="mb-4">
-          <label className="form-label" htmlFor="land">
-            Land
-          </label>
-          <DatePicker
-            className="form-input"
+          <DateInput
+            label="Land"
             name="land"
-            showTimeInput
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
-            timeCaption="Time: "
             selected={land}
             onChange={(val) => setLand(val)}
-          />
+          ></DateInput>
         </div>
         <div className="mb-6">
-          <label className="form-label" htmlFor="meters">
-            Meters
-          </label>
-          <input className="form-input" name="meters" {...meters}></input>
+          <Input
+            label="Meters"
+            name="meters"
+            placeholder="Meters"
+            {...meters}
+          />
         </div>
         <div className="flex items-center justify-between">
-          <button className="btn cancel" onClick={cancel}>
+          <Button kind="cancel" onClick={cancel}>
             Cancel
-          </button>
-          <button className="btn confirm" type="submit">
+          </Button>
+          <Button kind="confirm" type="submit">
             Save
-          </button>
+          </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useInputValue } from '../hooks/use-input-value';
 import { Redirect } from 'react-router-dom';
 import { useAuthState } from '../contexts/states/auth-state';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import Form from '../components/Form';
 
 function Profile() {
   const [{ member }] = useAuthState();
@@ -9,41 +12,44 @@ function Profile() {
   const lastName = useInputValue(member.attributes.lastName);
   const [shouldCancel, setShouldCancel] = useState(false);
 
-  const cancel = (e) => {
-    e.preventDefault();
+  const cancel = () => {
     setShouldCancel(true);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    alert('Saved');
   };
 
   return shouldCancel ? (
     <Redirect to="/my-trips" />
   ) : (
     <div className="m-auto max-w-md">
-      <form className="form" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="form-label" htmlFor="firstName">
-            First Name
-          </label>
-          <input className="form-input" name="firstName" {...firstName}></input>
+          <Input
+            label="First Name"
+            name="firstName"
+            placeholder="First Name"
+            required={true}
+            {...firstName}
+          />
         </div>
         <div className="mb-6">
-          <label className="form-label" htmlFor="lastName">
-            Last Name
-          </label>
-          <input className="form-input" name="lastName" {...lastName}></input>
+          <Input
+            label="Last Name"
+            name="lastName"
+            placeholder="Last Name"
+            required={true}
+            {...lastName}
+          />
         </div>
         <div className="flex items-center justify-between">
-          <button className="btn" onClick={cancel}>
-            Cancel
-          </button>
-          <button className="btn confirm" type="submit">
+          <Button onClick={cancel}>Cancel</Button>
+          <Button kind="confirm" type="submit">
             Save
-          </button>
+          </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

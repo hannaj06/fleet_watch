@@ -3,17 +3,26 @@ import api from '../api/client';
 import { zip } from '../utils';
 import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
-import { Loader } from '../components/components';
+import { Loader } from '../components';
 import Select from 'react-select';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import DateInput from '../components/DateInput';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeader,
+  TableCell,
+} from '../components/Table';
 
 const METER_THRESHOLD = 10000;
 
-function TableRow({ trip, tripBoat, boats, fetchData }) {
+function TripRow({ trip, tripBoat, boats, fetchData, member }) {
   const [isEdit, setIsEdit] = useState(false);
   const [boat, setBoat] = useState({
-    value: tripBoat ? tripBoat.attributes.boatName : '',
+    value: tripBoat ? tripBoat.id : '',
     label: tripBoat ? tripBoat.attributes.boatName : '',
   });
   const [launch, setLaunch] = useState(new Date());
@@ -35,12 +44,16 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
       land,
       meters: meters.value,
     });
-    await api.updateRelationship(trip.id, 'trip', boat.value, 'boat');
+    const relationships = {
+      member: { data: { type: 'member', id: member.id } },
+      boat: { data: { type: 'boat', id: boat } },
+    };
     setIsEdit(false);
     fetchData();
   };
+
   const options = boats.map((option) => {
-    const value = option.attributes.boatName;
+    const value = option.id;
     const label = option.attributes.boatName;
     return { value, label };
   });
@@ -51,82 +64,75 @@ function TableRow({ trip, tripBoat, boats, fetchData }) {
 
   return isEdit ? (
     <>
-      <td className="table-td w-1/4">
+      <TableCell className="w-1/4">
         <Select
           className="w-full"
           options={options}
           value={boat}
           onChange={onChange}
         />
-      </td>
-      <td className="table-td text-right w-40">
-        <DatePicker
-          className="form-input text-right"
+      </TableCell>
+      <TableCell textRight={true} className="w-40">
+        <DateInput
+          showLabel={false}
+          textRight={true}
           name="launch"
-          showTimeInput
-          timeFormat="HH:mm"
-          dateFormat="MMMM d, yyyy h:mm aa"
-          timeCaption="Time: "
           selected={launch}
           onChange={(val) => setLaunch(val)}
         />
-      </td>
-      <td className="table-td text-right w-40">
-        <DatePicker
-          className="form-input text-right"
+      </TableCell>
+      <TableCell textRight={true} className="w-40">
+        <DateInput
+          showLabel={false}
+          textRight={true}
           name="land"
-          showTimeInput
-          timeFormat="HH:mm"
-          dateFormat="MMMM d, yyyy h:mm aa"
-          timeCaption="Time: "
           selected={land}
           onChange={(val) => setLand(val)}
         />
-      </td>
-      <td className="table-td text-right w-40">
-        <input
-          className="form-input text-right"
+      </TableCell>
+      <TableCell textRight={true} className="w-40">
+        <Input
+          textRight={true}
+          showLabel={false}
           name="meters"
           {...meters}
-        ></input>
-      </td>
-      <td className="table-td table-buttons text-right">
-        <button className="btn small confirm" onClick={() => saveTrip(trip)}>
+        ></Input>
+      </TableCell>
+      <TableCell textRight={true} className="table-buttons">
+        <Button small={true} kind="confirm" onClick={() => saveTrip(trip)}>
           Save
-        </button>
-        <button className="btn small" onClick={() => editTrip(trip, false)}>
+        </Button>
+        <Button small={true} onClick={() => editTrip(trip, false)}>
           Cancel
-        </button>
-      </td>
+        </Button>
+      </TableCell>
     </>
   ) : (
     <>
-      <td className="table-td text-left">
-        <span className="responsive-cell-label">Boat</span>
-        <span className="cell-text">{tripBoat.attributes.boatName}</span>
-      </td>
-      <td className="table-td text-right">
-        <span className="responsive-cell-label">Launch</span>
-        <span className="cell-text">{trip.attributes.launch}</span>
-      </td>
-      <td className="table-td text-right">
-        <span className="responsive-cell-label">Land</span>
-        <span className="cell-text">
-          {trip.attributes.land || 'On the water'}
-        </span>
-      </td>
-      <td className="table-td text-right">
-        <span className="responsive-cell-label">Meters</span>
-        <span className="cell-text">{trip.attributes.meters}</span>
-      </td>
-      <td className="table-td table-buttons text-right">
-        <button className="btn small action" onClick={() => editTrip(trip)}>
+      <TableCell label="Boat" content={tripBoat.attributes.boatName} />
+      <TableCell
+        textRight={true}
+        label="Launch"
+        content={trip.attributes.launch}
+      />
+      <TableCell
+        textRight={true}
+        label="Land"
+        content={trip.attributes.land || 'On the water'}
+      />
+      <TableCell
+        textRight={true}
+        label="Meters"
+        content={trip.attributes.meters}
+      />
+      <TableCell textRight={true} className="table-buttons">
+        <Button kind="action" small={true} onClick={() => editTrip(trip)}>
           Edit
-        </button>
-        <button className="btn small delete" onClick={() => deleteTrip(trip)}>
+        </Button>
+        <Button kind="delete" small={true} onClick={() => deleteTrip(trip)}>
           Delete
-        </button>
-      </td>
+        </Button>
+      </TableCell>
     </>
   );
 }
@@ -169,44 +175,49 @@ function MyTrips() {
   return trips ? (
     <>
       <div className="flex">
-        <table className="table w-full">
-          <thead className="thead">
-            <tr>
-              <th className="table-header">Boat</th>
-              <th className="table-header text-right">Launch</th>
-              <th className="table-header text-right">Land</th>
-              <th className="table-header text-right">Meters</th>
-              <th className="table-header"></th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeader>Boat</TableHeader>
+              <TableHeader textRight={true}>Launch</TableHeader>
+              <TableHeader textRight={true}>Land</TableHeader>
+              <TableHeader textRight={true}>Meters</TableHeader>
+              <TableHeader></TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {trips.map(([trip, boat]) => (
-              <tr
+              <TableRow
                 className={trip.attributes.land !== null ? '' : 'in-progress'}
                 key={trip.id}
               >
-                <TableRow
+                <TripRow
                   fetchData={fetchData}
                   boats={boats}
                   tripBoat={boat}
                   trip={trip}
+                  member={member}
                 />
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
-      <div className="flex">
+      <div className="flex mt-4">
         <div className="w-full">
           Total Meters:{' '}
-          <span
-            className={
-              totalMeters < METER_THRESHOLD ? 'text-red-600' : 'text-green-600'
-            }
-          >
-            {totalMeters}
-          </span>{' '}
-          / {METER_THRESHOLD}
+          <strong>
+            <span
+              className={
+                totalMeters < METER_THRESHOLD
+                  ? 'text-red-600'
+                  : 'text-green-600'
+              }
+            >
+              {totalMeters}
+            </span>{' '}
+            / {METER_THRESHOLD}
+          </strong>
         </div>
       </div>
     </>

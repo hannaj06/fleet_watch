@@ -12,4 +12,5 @@ COPY ui/package.json /app/package.json
 RUN yarn
 
 EXPOSE 3000
+EXPOSE 9009
 CMD ["yarn", "start"]
