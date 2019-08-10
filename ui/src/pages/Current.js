@@ -20,13 +20,11 @@ function Current() {
       const allTrips = await api.getAllTrips();
 
       const members = allTrips.map((trip) => {
-        return api.getMemberForTrip(trip);
+        return api.cache.getMemberForTrip(trip);
       });
-      const boats = await Promise.all(
-        allTrips.map(async (trip) => {
-          return await api.getBoatForTrip(trip);
-        })
-      );
+      const boats = allTrips.map((trip) => {
+        return api.cache.getBoatForTrip(trip);
+      });
       setTrips(zip(allTrips, members, boats));
     };
     fetchData();

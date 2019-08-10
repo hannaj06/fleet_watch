@@ -44,10 +44,6 @@ function TripRow({ trip, tripBoat, boats, fetchData, member }) {
       land,
       meters: meters.value,
     });
-    const relationships = {
-      member: { data: { type: 'member', id: member.id } },
-      boat: { data: { type: 'boat', id: boat } },
-    };
     setIsEdit(false);
     fetchData();
   };

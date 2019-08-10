@@ -25,6 +25,11 @@ class CustomJSONAPISerializer extends JSONAPISerializer {
   resourceKey(type) {
     return 'remoteId';
   }
+  resourceAttribute(type, attr) {
+    return attr.replace(/[A-Z]/g, (char, index) => {
+      return (index !== 0 ? '_' : '') + char.toLowerCase();
+    });
+  }
 }
 
 const remote = new JSONAPISource({

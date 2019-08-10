@@ -47,7 +47,7 @@ let api = {
 
   update(id, type, attributes, relationships) {
     return store.update((t) =>
-      t.replaceRecord({
+      t.updateRecord({
         id,
         type,
         attributes,
@@ -111,6 +111,19 @@ let api = {
 
   getAllBoats() {
     return this.findRecords('boat');
+  },
+
+  cache: {
+    getBoatForTrip(trip) {
+      return store.cache.query((q) =>
+        q.findRelatedRecord({ type: 'trip', id: trip.id }, 'boat')
+      );
+    },
+    getMemberForTrip(trip) {
+      return store.cache.query((q) =>
+        q.findRelatedRecord({ type: 'trip', id: trip.id }, 'member')
+      );
+    },
   },
 };
 
