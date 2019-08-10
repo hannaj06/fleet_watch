@@ -30,7 +30,7 @@ function Input({
           id={name}
           type={type}
           name={name}
-          autofocus={autofocus}
+          autoFocus={autofocus}
           placeholder={placeholder}
           required={required}
           disabled={disabled}

@@ -19,11 +19,9 @@ function Current() {
       console.info('Fetching current trips');
       const allTrips = await api.getAllTrips();
 
-      const members = await Promise.all(
-        allTrips.map(async (trip) => {
-          return await api.getMemberForTrip(trip);
-        })
-      );
+      const members = allTrips.map((trip) => {
+        return api.getMemberForTrip(trip);
+      });
       const boats = await Promise.all(
         allTrips.map(async (trip) => {
           return await api.getBoatForTrip(trip);

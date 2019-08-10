@@ -19,10 +19,10 @@ import {
 
 const METER_THRESHOLD = 10000;
 
-function TripRow({ trip, tripBoat, boats, fetchData }) {
+function TripRow({ trip, tripBoat, boats, fetchData, member }) {
   const [isEdit, setIsEdit] = useState(false);
   const [boat, setBoat] = useState({
-    value: tripBoat ? tripBoat.attributes.boatName : '',
+    value: tripBoat ? tripBoat.id : '',
     label: tripBoat ? tripBoat.attributes.boatName : '',
   });
   const [launch, setLaunch] = useState(new Date());
@@ -44,13 +44,16 @@ function TripRow({ trip, tripBoat, boats, fetchData }) {
       land,
       meters: meters.value,
     });
-    await api.updateRelationship(trip.id, 'trip', boat.value, 'boat');
+    const relationships = {
+      member: { data: { type: 'member', id: member.id } },
+      boat: { data: { type: 'boat', id: boat } },
+    };
     setIsEdit(false);
     fetchData();
   };
 
   const options = boats.map((option) => {
-    const value = option.attributes.boatName;
+    const value = option.id;
     const label = option.attributes.boatName;
     return { value, label };
   });
@@ -193,6 +196,7 @@ function MyTrips() {
                   boats={boats}
                   tripBoat={boat}
                   trip={trip}
+                  member={member}
                 />
               </TableRow>
             ))}

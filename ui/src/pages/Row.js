@@ -9,6 +9,7 @@ import Form from '../components/Form';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import DateInput from '../components/DateInput';
+import notifications from '../services/notifications';
 
 function Row() {
   const [{ member }] = useAuthState();
@@ -25,7 +26,7 @@ function Row() {
   const boatPromise = async () => {
     const boats = await api.getAllBoats();
     return boats.map((option) => {
-      const value = option.attributes.boatName;
+      const value = option.id;
       const label = option.attributes.boatName;
       return { value, label };
     });
@@ -37,10 +38,14 @@ function Row() {
       land,
       meters: meters.value,
     };
+    const relationships = {
+      member: { data: { type: 'member', id: member.id } },
+      boat: { data: { type: 'boat', id: boat } },
+    };
     try {
-      const trip = await api.createRecord('trip', attributes);
-      await api.updateRelationship(trip.id, 'trip', boat, 'boat');
-      await api.updateRelationship(trip.id, 'trip', member.id, 'member');
+      await api.createRecord('trip', attributes, relationships);
+      notifications.success('Created!');
+      setShouldCancel(true);
     } catch (e) {
       console.error(e);
     }
