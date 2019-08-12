@@ -150,11 +150,9 @@ function MyTrips() {
   const fetchData = async () => {
     console.info('Fetching my trips');
     const trips = await api.getTrips(member);
-    const tripBoats = await Promise.all(
-      trips.map(async (trip) => {
-        return await api.getBoatForTrip(trip);
-      })
-    );
+    const tripBoats = trips.map((trip) => {
+      return api.cache.getBoatForTrip(trip);
+    });
     setTrips(zip(trips, tripBoats));
   };
 

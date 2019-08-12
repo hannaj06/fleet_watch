@@ -97,8 +97,11 @@ let api = {
   },
 
   getTrips(member) {
-    return store.query((q) =>
-      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips')
+    return store.query(
+      (q) => q.findRelatedRecords({ type: 'member', id: member.id }, 'trips'),
+      {
+        sources: { remote: { include: ['boat'] } },
+      }
     );
   },
 
