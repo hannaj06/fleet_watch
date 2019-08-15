@@ -3,7 +3,7 @@ import { useAuthState } from '../contexts/states/auth-state';
 import { useInputValue } from '../hooks/use-input-value';
 import api from '../api/client';
 import { Redirect } from 'react-router-dom';
-import { Loader } from '../components';
+import Loader from '../components/Loader';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Form from '../components/Form';
@@ -37,7 +37,7 @@ function Login() {
             label="Email"
             name="email"
             placeholder="Email"
-            required={true}
+            required
             {...email}
           />
         </div>
@@ -47,7 +47,7 @@ function Login() {
             name="password"
             placeholder="Password"
             type="password"
-            required={true}
+            required
             {...password}
           />
         </div>

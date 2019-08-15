@@ -39,7 +39,7 @@ function Profile() {
             label="First Name"
             name="firstName"
             placeholder="First Name"
-            required={true}
+            required
             {...firstName}
           />
         </div>
@@ -48,7 +48,7 @@ function Profile() {
             label="Last Name"
             name="lastName"
             placeholder="Last Name"
-            required={true}
+            required
             {...lastName}
           />
         </div>
@@ -57,7 +57,7 @@ function Profile() {
             label="Email"
             name="email"
             placeholder="Email"
-            required={true}
+            required
             {...email}
           />
         </div>

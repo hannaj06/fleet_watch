@@ -10,16 +10,16 @@ import { AuthStateProvider } from './contexts/states/auth-state';
 import authReducer, { initialState } from './contexts/reducers/auth-reducer';
 import { coordinator } from './api/client';
 import useAuth from './hooks/use-auth';
-import {
-  Current,
-  Login,
-  Logout,
-  MyTrips,
-  Profile,
-  Row,
-  Weather,
-} from './pages';
-import { Header, PrivateRoute, Loader } from './components';
+import Current from './pages/Current';
+import Login from './pages/Login';
+import Logout from './pages/Logout';
+import MyTrips from './pages/MyTrips';
+import Profile from './pages/Profile';
+import Row from './pages/Row';
+import Weather from './pages/Weather';
+import Header from './components/Header';
+import PrivateRoute from './components/utils/PrivateRoute';
+import Loader from './components/Loader';
 import { Container } from './services/notifications';
 
 function App() {

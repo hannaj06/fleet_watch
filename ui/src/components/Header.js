@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Nav } from '.';
+import Nav from './Nav';
 import HeaderMenu from './HeaderMenu';
 import HeaderToggle from './HeaderToggle';
 

@@ -16,19 +16,19 @@ const stories = storiesOf('Button', module).add(
       <>
         <div className="my-2">
           <Button>Hello</Button>
-          <Button small={true}>Hello</Button>
+          <Button small>Hello</Button>
           {kinds.map((kind) => (
             <div className="my-4">
               <Button kind={kind}>
                 {kind.charAt(0).toUpperCase() + kind.slice(1)}
               </Button>
-              <Button kind={kind} disabled={true}>
+              <Button kind={kind} disabled>
                 Disabled: {kind.charAt(0).toUpperCase() + kind.slice(1)}
               </Button>
-              <Button kind={kind} small={true}>
+              <Button kind={kind} small>
                 {kind.charAt(0).toUpperCase() + kind.slice(1)}
               </Button>
-              <Button kind={kind} small={true} disabled={true}>
+              <Button kind={kind} small disabled>
                 Disabled: {kind.charAt(0).toUpperCase() + kind.slice(1)}
               </Button>
             </div>

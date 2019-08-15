@@ -23,7 +23,7 @@ export default storiesOf('Table', module).add('base', () => {
         <TableRow>
           <TableHeader>Name</TableHeader>
           <TableHeader>Email</TableHeader>
-          <TableHeader textRight={true}>Age</TableHeader>
+          <TableHeader textRight>Age</TableHeader>
           <TableHeader>Custom</TableHeader>
         </TableRow>
       </TableHead>
@@ -32,7 +32,7 @@ export default storiesOf('Table', module).add('base', () => {
           <TableRow key={name}>
             <TableCell label="Name" content={name} />
             <TableCell label="Email" content={email} />
-            <TableCell textRight={true} label="Age" content={age} />
+            <TableCell textRight label="Age" content={age} />
             <TableCell>
               <div style={{ color: 'darkred' }}>Custom Content</div>
             </TableCell>

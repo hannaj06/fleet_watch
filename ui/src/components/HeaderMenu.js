@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaAngleDown, FaUser } from 'react-icons/fa';
-import { Link } from '.';
+import Link from './utils/Link';
 
 function MenuLink({ to, onClick, children }) {
   return (

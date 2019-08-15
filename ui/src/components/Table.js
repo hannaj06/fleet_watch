@@ -1,4 +1,5 @@
 import React from 'react';
+import PrettyDate from './PrettyDate';
 
 export function Table({ children }) {
   return <table className="table">{children}</table>;
@@ -35,10 +36,28 @@ export function TableCell({ children, textRight, label, content, className }) {
         children
       ) : (
         <>
-          <span className="responsive-cell-label">{label}</span>
-          <span className="cell-text">{content}</span>
+          <TableCellContent label={label}>{content}</TableCellContent>
         </>
       )}
     </td>
+  );
+}
+
+export function TableDateCell({ date, fallback, label, ...rest }) {
+  return (
+    <TableCell {...rest}>
+      <TableCellContent label={label}>
+        <PrettyDate date={date} fallback={fallback} />
+      </TableCellContent>
+    </TableCell>
+  );
+}
+
+function TableCellContent({ label, children }) {
+  return (
+    <>
+      <span className="responsive-cell-label">{label}</span>
+      <span className="cell-text">{children}</span>
+    </>
   );
 }

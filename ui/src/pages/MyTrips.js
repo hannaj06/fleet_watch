@@ -3,7 +3,7 @@ import api from '../api/client';
 import { zip } from '../utils';
 import { useNumberValue } from '../hooks/use-input-value';
 import { useAuthState } from '../contexts/states/auth-state';
-import { Loader } from '../components';
+import Loader from '../components/Loader';
 import Select from 'react-select';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -15,6 +15,7 @@ import {
   TableRow,
   TableHeader,
   TableCell,
+  TableDateCell,
 } from '../components/Table';
 
 const METER_THRESHOLD = 10000;
@@ -68,37 +69,32 @@ function TripRow({ trip, tripBoat, boats, fetchData, member }) {
           onChange={onChange}
         />
       </TableCell>
-      <TableCell textRight={true} className="w-40">
+      <TableCell textRight className="w-40">
         <DateInput
           showLabel={false}
-          textRight={true}
+          textRight
           name="launch"
           selected={launch}
           onChange={(val) => setLaunch(val)}
         />
       </TableCell>
-      <TableCell textRight={true} className="w-40">
+      <TableCell textRight className="w-40">
         <DateInput
           showLabel={false}
-          textRight={true}
+          textRight
           name="land"
           selected={land}
           onChange={(val) => setLand(val)}
         />
       </TableCell>
-      <TableCell textRight={true} className="w-40">
-        <Input
-          textRight={true}
-          showLabel={false}
-          name="meters"
-          {...meters}
-        ></Input>
+      <TableCell textRight className="w-40">
+        <Input textRight showLabel={false} name="meters" {...meters}></Input>
       </TableCell>
-      <TableCell textRight={true} className="table-buttons">
-        <Button small={true} kind="confirm" onClick={() => saveTrip(trip)}>
+      <TableCell textRight className="table-buttons">
+        <Button small kind="confirm" onClick={() => saveTrip(trip)}>
           Save
         </Button>
-        <Button small={true} onClick={() => editTrip(trip, false)}>
+        <Button small onClick={() => editTrip(trip, false)}>
           Cancel
         </Button>
       </TableCell>
@@ -106,26 +102,19 @@ function TripRow({ trip, tripBoat, boats, fetchData, member }) {
   ) : (
     <>
       <TableCell label="Boat" content={tripBoat.attributes.boatName} />
-      <TableCell
-        textRight={true}
-        label="Launch"
-        content={trip.attributes.launch}
-      />
-      <TableCell
-        textRight={true}
+      <TableDateCell textRight label="Launch" date={trip.attributes.launch} />
+      <TableDateCell
+        textRight
         label="Land"
-        content={trip.attributes.land || 'On the water'}
+        fallback="On the water"
+        date={trip.attributes.land}
       />
-      <TableCell
-        textRight={true}
-        label="Meters"
-        content={trip.attributes.meters}
-      />
-      <TableCell textRight={true} className="table-buttons">
-        <Button kind="action" small={true} onClick={() => editTrip(trip)}>
+      <TableCell textRight label="Meters" content={trip.attributes.meters} />
+      <TableCell textRight className="table-buttons">
+        <Button kind="action" small onClick={() => editTrip(trip)}>
           Edit
         </Button>
-        <Button kind="delete" small={true} onClick={() => deleteTrip(trip)}>
+        <Button kind="delete" small onClick={() => deleteTrip(trip)}>
           Delete
         </Button>
       </TableCell>
@@ -173,9 +162,9 @@ function MyTrips() {
           <TableHead>
             <TableRow>
               <TableHeader>Boat</TableHeader>
-              <TableHeader textRight={true}>Launch</TableHeader>
-              <TableHeader textRight={true}>Land</TableHeader>
-              <TableHeader textRight={true}>Meters</TableHeader>
+              <TableHeader textRight>Launch</TableHeader>
+              <TableHeader textRight>Land</TableHeader>
+              <TableHeader textRight>Meters</TableHeader>
               <TableHeader></TableHeader>
             </TableRow>
           </TableHead>

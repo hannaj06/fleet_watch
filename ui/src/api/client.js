@@ -107,7 +107,12 @@ let api = {
 
   getAllTrips() {
     return store.query((q) => q.findRecords('trip'), {
-      label: 'Find all boats',
+      sources: { remote: { include: ['boat', 'member'] } },
+    });
+  },
+
+  getCurrentTrips() {
+    return store.query((q) => q.findRecords('trip'), {
       sources: { remote: { include: ['boat', 'member'] } },
     });
   },

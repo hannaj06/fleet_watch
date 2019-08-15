@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/client';
 import { zip } from '../utils';
-import { Loader } from '../components';
+import Loader from '../components/Loader';
 import {
   Table,
   TableHead,
@@ -9,6 +9,7 @@ import {
   TableRow,
   TableHeader,
   TableCell,
+  TableDateCell,
 } from '../components/Table';
 
 function Current() {
@@ -17,7 +18,7 @@ function Current() {
   useEffect(() => {
     const fetchData = async () => {
       console.info('Fetching current trips');
-      const allTrips = await api.getAllTrips();
+      const allTrips = await api.getCurrentTrips();
 
       const members = allTrips.map((trip) => {
         return api.cache.getMemberForTrip(trip);
@@ -36,7 +37,7 @@ function Current() {
         <TableRow>
           <TableHeader>Name</TableHeader>
           <TableHeader>Boat</TableHeader>
-          <TableHeader textRight={true}>Launch</TableHeader>
+          <TableHeader textRight>Launch</TableHeader>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -50,10 +51,10 @@ function Current() {
               label="Boat"
               content={boat ? boat.attributes.boatName : ''}
             />
-            <TableCell
-              textRight={true}
+            <TableDateCell
+              textRight
               label="Launch"
-              content={trip.attributes.launch}
+              date={trip.attributes.launch}
             />
           </TableRow>
         ))}
