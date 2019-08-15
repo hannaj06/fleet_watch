@@ -1,32 +1,25 @@
-import config from '../../config';
-
-const { tokenKey } = config;
-
-const initialState = { auth: { token: null }, member: null, isLoading: true };
+const initialState = { member: null, isLoading: true, isLoggedIn: false };
 
 const authStateReducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN': {
-      localStorage.setItem(tokenKey, action.auth.token);
-      return { ...state, auth: action.auth };
-    }
-    case 'AUTH': {
-      return { ...state, isLoading: action.isLoading };
+      return { ...state, isLoggedIn: true };
     }
     case 'LOGOUT': {
-      localStorage.removeItem(tokenKey);
       return {
         ...state,
-        auth: { token: null },
         member: null,
         isLoading: false,
+        isLoggedIn: false,
       };
     }
-    case 'SET_TOKEN': {
-      return { ...state, auth: action.auth };
-    }
     case 'LOAD_MEMBER': {
-      return { ...state, member: action.member, isLoading: false };
+      return {
+        ...state,
+        member: action.member,
+        isLoading: false,
+        isLoggedIn: true,
+      };
     }
     default:
       return state;

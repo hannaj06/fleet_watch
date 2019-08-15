@@ -2,25 +2,29 @@ import adapter from './adapter';
 import {
   coordinator as realCoordinator,
   store as realStore,
-  recordIdentityFromKeys,
+  recordIdentityFromKeys as realRecordIdentityFromKeys,
 } from '../data/store';
 import {
   coordinator as mockCoordinator,
   store as mockStore,
+  recordIdentityFromKeys as mockRecordIdentityFromKeys,
 } from '../test/mocks/store';
 import mockClient from '../test/mocks/server';
 
 const isMock = process.env.REACT_APP_MOCK === 'true';
 const store = isMock ? mockStore : realStore;
 const coordinator = isMock ? mockCoordinator : realCoordinator;
+const recordIdentityFromKeys = isMock
+  ? mockRecordIdentityFromKeys
+  : realRecordIdentityFromKeys;
 
 let api = {
   login(email, password) {
     return adapter.post('auth/login', { email, password });
   },
 
-  logout(token) {
-    return adapter.post('auth/logout', { token });
+  logout() {
+    return adapter.post('auth/logout');
   },
 
   findRecord(type, id) {
@@ -31,21 +35,23 @@ let api = {
     return store.query((q) => q.findRecords(type));
   },
 
-  createRecord(type, attributes) {
+  createRecord(type, attributes, relationships) {
     return store.update((t) =>
       t.addRecord({
         type,
         attributes,
+        relationships,
       })
     );
   },
 
-  update(id, type, attributes) {
+  update(id, type, attributes, relationships) {
     return store.update((t) =>
-      t.replaceRecord({
+      t.updateRecord({
         id,
         type,
         attributes,
+        relationships,
       })
     );
   },
@@ -79,7 +85,7 @@ let api = {
   },
 
   getMemberForTrip(trip) {
-    return store.query((q) =>
+    return store.cache.query((q) =>
       q.findRelatedRecord({ type: 'trip', id: trip.id }, 'member')
     );
   },
@@ -91,22 +97,41 @@ let api = {
   },
 
   getTrips(member) {
-    return store.query((q) =>
-      q.findRelatedRecords({ type: 'member', id: member.id }, 'trips', {
-        sources: { remote: { include: ['boat', 'member'] } },
-      })
+    return store.query(
+      (q) => q.findRelatedRecords({ type: 'member', id: member.id }, 'trips'),
+      {
+        sources: { remote: { include: ['boat'] } },
+      }
     );
   },
 
   getAllTrips() {
     return store.query((q) => q.findRecords('trip'), {
-      label: 'Find all boats',
+      sources: { remote: { include: ['boat', 'member'] } },
+    });
+  },
+
+  getCurrentTrips() {
+    return store.query((q) => q.findRecords('trip'), {
       sources: { remote: { include: ['boat', 'member'] } },
     });
   },
 
   getAllBoats() {
     return this.findRecords('boat');
+  },
+
+  cache: {
+    getBoatForTrip(trip) {
+      return store.cache.query((q) =>
+        q.findRelatedRecord({ type: 'trip', id: trip.id }, 'boat')
+      );
+    },
+    getMemberForTrip(trip) {
+      return store.cache.query((q) =>
+        q.findRelatedRecord({ type: 'trip', id: trip.id }, 'member')
+      );
+    },
   },
 };
 

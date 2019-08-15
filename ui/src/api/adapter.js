@@ -1,16 +1,11 @@
 import axios from 'axios';
 import config from '../config';
 
-const { API_ROOT, tokenKey } = config;
+const { API_ROOT } = config;
 
 const instance = axios.create({
   baseURL: API_ROOT,
-});
-
-instance.interceptors.request.use((config) => {
-  const token = localStorage[tokenKey];
-  config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  withCredentials: true,
 });
 
 const adapter = {

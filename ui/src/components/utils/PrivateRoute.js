@@ -1,9 +1,10 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { useAuthState } from '../contexts/states/auth-state';
+import { useAuthState } from '../../contexts/states/auth-state';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const [{ member }] = useAuthState();
+  const redirectTo = '/login';
 
   return (
     <Route
@@ -14,7 +15,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
         ) : (
           <Redirect
             to={{
-              pathname: '/login',
+              pathname: redirectTo,
               state: { from: props.location },
             }}
           />

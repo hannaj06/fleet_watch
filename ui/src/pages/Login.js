@@ -3,6 +3,10 @@ import { useAuthState } from '../contexts/states/auth-state';
 import { useInputValue } from '../hooks/use-input-value';
 import api from '../api/client';
 import { Redirect } from 'react-router-dom';
+import Loader from '../components/Loader';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import Form from '../components/Form';
 
 function Login() {
   const [{ member }, dispatch] = useAuthState();
@@ -11,11 +15,10 @@ function Login() {
   const password = useInputValue('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     setAuthAttempted(true);
     try {
-      const { data: auth } = await api.login(email.value, password.value);
-      dispatch({ type: 'LOGIN', auth });
+      await api.login(email.value, password.value);
+      dispatch({ type: 'LOGIN' });
     } catch (e) {
       console.error(e);
       setAuthAttempted(false);
@@ -25,46 +28,35 @@ function Login() {
   return member ? (
     <Redirect to="/my-trips" />
   ) : authAttempted ? (
-    <div>Logging in</div>
+    <Loader />
   ) : (
     <div className="m-auto max-w-md">
-      <form className="form" onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="form-label" htmlFor="email">
-            Email
-          </label>
-          <input
+          <Input
+            label="Email"
             name="email"
             placeholder="Email"
-            className="form-input"
+            required
             {...email}
           />
         </div>
         <div className="mb-6">
-          <label className="form-label" htmlFor="password">
-            Password
-          </label>
-          <input
-            type="password"
+          <Input
+            label="Password"
             name="password"
             placeholder="Password"
-            className="form-input"
+            type="password"
+            required
             {...password}
           />
         </div>
         <div className="flex items-center justify-between">
-          <button className="btn confirm" type="submit">
-            {' '}
+          <Button kind="confirm" type="submit">
             Sign In
-          </button>
-          <a
-            className="inline-block align-baseline font-bold text-sm text-grey-900 hover:text-blue-800"
-            href="/login"
-          >
-            Forgot Password?
-          </a>
+          </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

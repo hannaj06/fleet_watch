@@ -8,6 +8,4 @@ const dev = {
 
 const config = process.env.NODE_ENV === 'development' ? dev : prod;
 
-config.tokenKey = 'fleetwatchtoken';
-
 export default config;

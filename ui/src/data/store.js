@@ -25,8 +25,10 @@ class CustomJSONAPISerializer extends JSONAPISerializer {
   resourceKey(type) {
     return 'remoteId';
   }
-  recordType(type) {
-    return type;
+  resourceAttribute(type, attr) {
+    return attr.replace(/[A-Z]/g, (char, index) => {
+      return (index !== 0 ? '_' : '') + char.toLowerCase();
+    });
   }
 }
 
@@ -37,6 +39,8 @@ const remote = new JSONAPISource({
   host: API_ROOT,
   SerializerClass: CustomJSONAPISerializer,
 });
+
+remote.requestProcessor.defaultFetchSettings.credentials = 'include';
 
 const coordinator = new Coordinator({
   sources: [memory, remote],

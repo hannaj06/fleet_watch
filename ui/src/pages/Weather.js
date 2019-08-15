@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaWind } from 'react-icons/fa';
-import { Loader } from '../components/components';
+import Loader from '../components/Loader';
 
 function Weather() {
   const [weather, setWeather] = useState();
