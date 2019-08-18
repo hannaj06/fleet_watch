@@ -1,7 +1,15 @@
 import MemorySource from '@orbit/memory';
 import { KeyMap } from '@orbit/data';
 import JSONAPISource, { JSONAPISerializer } from '@orbit/jsonapi';
-import Coordinator, { RequestStrategy, SyncStrategy } from '@orbit/coordinator';
+import IndexedDBSource from '@orbit/indexeddb';
+import IndexedDBBucket, { supportsIndexedDB } from '@orbit/indexeddb-bucket';
+import LocalStorageBucket from '@orbit/local-storage-bucket';
+import Coordinator, {
+  EventLoggingStrategy,
+  RequestStrategy,
+  SyncStrategy,
+  LogTruncationStrategy,
+} from '@orbit/coordinator';
 import schema from './schema';
 import config from '../config';
 
@@ -9,7 +17,8 @@ const { API_ROOT } = config;
 
 const keyMap = new KeyMap();
 
-const memory = new MemorySource({ schema, keyMap });
+const BucketClass = supportsIndexedDB() ? IndexedDBBucket : LocalStorageBucket;
+const bucket = new BucketClass({ namespace: 'fleetwatch-bucket' });
 
 const recordIdentityFromKeys = ({ type, id, keys }) => {
   const recordIdentity = {
@@ -32,9 +41,12 @@ class CustomJSONAPISerializer extends JSONAPISerializer {
   }
 }
 
+const memory = new MemorySource({ schema, keyMap, bucket });
+
 const remote = new JSONAPISource({
   schema,
   keyMap,
+  bucket,
   name: 'remote',
   host: API_ROOT,
   SerializerClass: CustomJSONAPISerializer,
@@ -42,12 +54,28 @@ const remote = new JSONAPISource({
 
 remote.requestProcessor.defaultFetchSettings.credentials = 'include';
 
+const backup = new IndexedDBSource({
+  schema,
+  bucket,
+  name: 'backup',
+  namespace: 'fleetwatch',
+});
+
 const coordinator = new Coordinator({
-  sources: [memory, remote],
+  sources: [memory, remote, backup],
 });
 
 // Log all the things
-// coordinator.addStrategy(new EventLoggingStrategy());
+coordinator.addStrategy(new EventLoggingStrategy());
+coordinator.addStrategy(new LogTruncationStrategy());
+
+coordinator.addStrategy(
+  new SyncStrategy({
+    source: 'memory',
+    target: 'backup',
+    blocking: true,
+  })
+);
 
 // Query the remote server whenever the store is queried
 coordinator.addStrategy(
@@ -55,7 +83,7 @@ coordinator.addStrategy(
     source: 'memory',
     on: 'beforeQuery',
     target: 'remote',
-    action: 'pull',
+    action: 'query',
     blocking(query) {
       if (
         query.expression.op === 'findRecord' &&
@@ -64,51 +92,32 @@ coordinator.addStrategy(
       ) {
         return true;
       }
-      return true;
+      return false;
     },
-    catch(e) {
-      // https://github.com/orbitjs/orbit/issues/653
-      console.log('beforeQuery error');
-      setTimeout(() => {
-        this.source.requestQueue.skip();
-        this.target.requestQueue.skip();
-      }, 0);
-      throw e;
-    },
+    // catch(e) {
+    //   // https://github.com/orbitjs/orbit/issues/653
+    //   console.log('beforeQuery error');
+    //   this.source.requestQueue.skip(e);
+    //   this.target.requestQueue.skip(e);
+    //   throw e;
+    // },
   })
 );
 
 // Update the remote server whenever the store is updated
 coordinator.addStrategy(
   new RequestStrategy({
-    source: 'memory',
-    on: 'query',
-    catch(e) {
-      console.log('pull error');
-      setTimeout(() => {
-        this.source.requestQueue.skip();
-        this.target.requestQueue.skip();
-      }, 0);
-      throw e;
-    },
-  })
-);
-
-coordinator.addStrategy(
-  new RequestStrategy({
-    source: 'memory',
     on: 'beforeUpdate',
+    source: 'memory',
     target: 'remote',
-    action: 'push',
+    action: 'update',
     blocking: false,
-    catch(e) {
-      console.log('beforeUpdate error');
-      setTimeout(() => {
-        this.source.requestQueue.skip();
-        this.target.requestQueue.skip();
-      }, 0);
-      throw e;
-    },
+    // catch(e) {
+    //   console.log('beforeUpdate error');
+    //   this.source.requestQueue.skip(e);
+    //   this.target.requestQueue.skip(e);
+    //   throw e;
+    // },
   })
 );
 
@@ -118,16 +127,28 @@ coordinator.addStrategy(
     source: 'remote',
     target: 'memory',
     blocking: false,
-    catch(e) {
-      console.log('sync error');
-      setTimeout(() => {
-        this.source.requestQueue.skip();
-        this.target.requestQueue.skip();
-      }, 0);
-      throw e;
-    },
+    // catch(e) {
+    //   console.log('sync error');
+    //   this.source.requestQueue.skip(e);
+    //   this.target.requestQueue.skip(e);
+    //   throw e;
+    // },
   })
 );
+
+// coordinator.addStrategy(
+//   new RequestStrategy({
+//     source: 'memory',
+//     on: 'query',
+//     blocking: false,
+//     catch(e) {
+//       console.log('pull error');
+//       this.source.requestQueue.skip(e);
+//       this.target.requestQueue.skip(e);
+//       throw e;
+//     },
+//   })
+// );
 
 const store = memory;
 

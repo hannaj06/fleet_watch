@@ -20,7 +20,7 @@ import {
 
 const METER_THRESHOLD = 10000;
 
-function TripRow({ trip, tripBoat, boats, fetchData, member }) {
+function TripRow({ trip, tripBoat, boats, fetchData }) {
   const [isEdit, setIsEdit] = useState(false);
   const [boat, setBoat] = useState({
     value: tripBoat ? tripBoat.id : '',

@@ -58,11 +58,30 @@ function App() {
 
 export default () => {
   let [isReady, setIsReady] = useState(false);
+  const restore = async () => {
+    try {
+      console.log('Restoring data');
+
+      const backup = coordinator.sources.find(
+        (source) => source.name === 'backup'
+      );
+      const memory = coordinator.sources.find(
+        (source) => source.name === 'memory'
+      );
+      const transform = await backup.pull((q) => q.findRecords());
+      await memory.sync(transform);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
     console.info('Activating Coordinator');
     const activate = async () => {
       try {
+        await restore();
         await coordinator.activate({ logLevel: LogLevel.Info });
+        window.addEventListener('online', restore);
+        window.addEventListener('offline', restore);
         console.info('Coordinator Activated');
       } catch (e) {
         console.error(e);
