@@ -26,8 +26,8 @@ function TripRow({ trip, tripBoat, boats, fetchData, member }) {
     value: tripBoat ? tripBoat.id : '',
     label: tripBoat ? tripBoat.attributes.boatName : '',
   });
-  const [launch, setLaunch] = useState(new Date());
-  const [land, setLand] = useState();
+  const [launch, setLaunch] = useState(trip.attributes.launch);
+  const [land, setLand] = useState(trip.attributes.land);
   const meters = useNumberValue(trip.attributes.meters);
 
   const deleteTrip = async (trip) => {

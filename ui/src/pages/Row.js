@@ -33,6 +33,9 @@ function Row() {
   };
 
   const handleSubmit = async (e) => {
+    if (!boat) {
+      return notifications.error('Please select a boat!');
+    }
     const attributes = {
       launch,
       land,

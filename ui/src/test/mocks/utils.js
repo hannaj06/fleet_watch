@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const names = [
   'Joe Hanna',
   'Nico Mihalich',
@@ -77,8 +79,8 @@ function generateTrip(owner = 'me') {
     type: 'trip',
     id: generateId(),
     attributes: {
-      launch: getRandom(times),
-      land: getRandom(times),
+      launch: moment(getRandom(times), 'hh:mma').toDate(),
+      land: moment(getRandom(times), 'hh:mma').toDate(),
       meters: Math.floor(Math.random() * 15),
     },
     relationships: {
