@@ -9,7 +9,7 @@
     "@orbit/jsonapi": "^0.16.0",
     "@orbit/memory": "^0.16.0",
     "@orbit/utils": "^0.16.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "react": "^16.8.6",
     "react-datepicker": "^2.8.0",
     "react-dom": "^16.8.6",
